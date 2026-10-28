@@ -1,0 +1,12 @@
+/* 共通スタイル (style.css) */
+:root {
+  --primary: #d35400;
+  --bg-main: #faf7f2;
+  --border-color: #e8e2d8;
+  --text-main: #333333;
+}
+body {
+  font-family: 'Yu Gothic', 'Hiragino Sans', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
