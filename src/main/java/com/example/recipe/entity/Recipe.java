@@ -65,7 +65,7 @@ public class Recipe {
         this.ingredients = ingredients;
         this.instructions = instructions;
         this.image = image;
-    }
+    } 
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
