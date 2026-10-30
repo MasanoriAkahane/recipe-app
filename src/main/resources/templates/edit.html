@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レシピ編集 - レシピ管理アプリ</title>
+  <style>
+    body { font-family: 'Yu Gothic', sans-serif; background: #faf7f2; color: #333; margin: 0; padding: 24px; }
+    .back-link { text-decoration: none; color: #777; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { margin: 0 0 20px; font-size: 22px; color: #2c3e50; }
+    .recipe-form-layout { display: flex; gap: 24px; background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #e8e2d8; max-width: 900px; }
+    .form-photo-panel { width: 280px; flex-shrink: 0; text-align: center; }
+    .photo-preview-box { width: 100%; height: 220px; border-radius: 12px; border: 2px dashed #d5cec5; background: #fdfbf7; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 12px; }
+    .photo-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+    .button-select-photo { display: inline-block; padding: 8px 16px; background: #e8e2d8; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
+    .form-input-panel { flex: 1; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 13px; color: #444; }
+    .form-group input[type="text"], .form-group input[type="number"], .form-group select, .form-group textarea {
+      width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+    }
+    .form-row-three { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .button { padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
+    .button-primary { background: #d35400; color: white; }
+    .button-quiet { background: #e0dbd1; color: #555; }
+    .required { color: #c0392b; }
+  </style>
+</head>
+<body>
+  <a th:href="@{/recipes/{id}(id=${recipe.id})}" class="back-link">← 詳細画面へ戻る</a>
+  <h1>レシピを編集</h1>
+
+  <form th:action="@{/recipes/{id}/update(id=${recipe.id})}" th:object="${recipe}"
+        method="post" enctype="multipart/form-data" class="recipe-form-layout">
+    <div class="form-photo-panel">
+      <div class="photo-preview-box">
+        <img id="imagePreview" th:if="${recipe.image != null and !recipe.image.isEmpty()}"
+             th:src="${recipe.image}" alt="料理写真">
+        <span id="noImage" th:if="${recipe.image == null or recipe.image.isEmpty()}"
+              style="color:#999;font-size:13px;">No Image</span>
+      </div>
+      <label class="button-select-photo">
+        📷 料理写真を変更
+        <input type="file" name="imageFile" id="imageInput" accept="image/*"
+               onchange="previewImage(event)" style="display: none;">
+      </label>
+      <input type="hidden" name="currentImage" th:value="${recipe.image}">
+    </div>
+
+    <div class="form-input-panel">
+      <div class="form-group">
+        <label for="title">料理名 <span class="required">*</span></label>
+        <input type="text" id="title" th:field="*{title}" placeholder="例: 鮭の塩焼き定食" required>
+      </div>
+
+      <div class="form-group">
+        <label for="ingredients">材料・分量 (1行に1項目)</label>
+        <textarea id="ingredients" th:field="*{ingredients}" rows="3"
+                  placeholder="生鮭 2切れ&#10;塩 少々&#10;大根おろし 適量"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="instructions">作り方 (1行に1ステップ)</label>
+        <textarea id="instructions" th:field="*{instructions}" rows="3"
+                  placeholder="1. 鮭に塩を振る&#10;2. グリルで焼く"></textarea>
+      </div>
+
+      <div class="form-row-three">
+        <div class="form-group">
+          <label for="category">カテゴリ</label>
+          <select id="category" th:field="*{category}">
+            <option value="主菜">主菜</option>
+            <option value="副菜">副菜</option>
+            <option value="汁物">汁物</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cookingTime">時間 (分)</label>
+          <input type="number" id="cookingTime" th:field="*{cookingTime}" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="favoriteLevel">お気に入り度</label>
+          <select id="favoriteLevel" th:field="*{favoriteLevel}">
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a th:href="@{/recipes/{id}(id=${recipe.id})}" class="button button-quiet">キャンセル</a>
+        <button type="submit" class="button button-primary">変更を保存</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    function previewImage(event) {
+      const input = event.target;
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (!file.type.startsWith('image/')) {
+          alert('画像ファイルを選択してください');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          let preview = document.getElementById('imagePreview');
+          if (preview) {
+            preview.src = e.target.result;
+          } else {
+            preview = document.createElement('img');
+            preview.id = 'imagePreview';
+            preview.alt = '料理写真';
+            preview.src = e.target.result;
+            document.querySelector('.photo-preview-box').appendChild(preview);
+            const noImage = document.getElementById('noImage');
+            if (noImage) {
+              noImage.style.display = 'none';
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</body>
+</html>
