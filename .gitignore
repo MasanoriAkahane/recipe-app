@@ -1,0 +1,52 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# コンパイル成果物
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# DB実体データ（各自のローカルDBが混ざらないよう除外）
+/data/
+
+# IDE（エディタ）固有設定ファイル
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS固有ファイル
+.DS_Store
+Thumbs.db
