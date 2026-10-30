@@ -28,9 +28,9 @@ public class RecipeController {
 
     @GetMapping("/")
     public ModelAndView root(
-        @RequestParam(required = false) String searchText,
-        @RequestParam(required = false) String category,
-        @RequestParam(required = false) int y,
+        @RequestParam(required = false) String searchText, // 値が渡されない場合でも動作する。nullを受け取る。
+        @RequestParam(required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
+        @RequestParam(defaultValue = "0") int sort, // 値が渡されない場合、初期値0を受け取る。 int はNullを受け取れない型の為。
         ModelAndView mav) {
             //==========================================
             // String = 検索窓の文字列。
@@ -40,7 +40,7 @@ public class RecipeController {
             List<Recipe> list;
             switch (category){
                 // 全て
-                case "すべて" -> {// レシピ名or カテゴリでor検索　カテゴリはStringで来る。
+                case "すべて" -> {// レシピ名or カテゴリでor検索　カテゴリ名はStringで来ることを想定。
                     list = recipeRepository.findAllByOrderByUpdatedAtDesc();}
                 // 主菜
                 case "主菜" -> {list = recipeRepository.findByCategoryOrderByUpdatedAtDesc(category);}
