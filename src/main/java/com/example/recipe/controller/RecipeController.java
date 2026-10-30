@@ -32,11 +32,11 @@ public class RecipeController {
         @RequestParam(required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
         @RequestParam(defaultValue = "0") int sort, // 値が渡されない場合、初期値0を受け取る。 int はNullを受け取れない型の為。
         ModelAndView mav) {
-            //==========================================
+            //===========================================
             // String = 検索窓の文字列。
             // int = 表示する種類（すべて,主菜,副菜,汁物,その他）
             // int = 画面側のソート情報（更新日時新古、評価高低）
-            //==========================================
+            //===========================================
             List<Recipe> list;
             switch (category){
                 // 全て
