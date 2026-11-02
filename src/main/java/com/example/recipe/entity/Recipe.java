@@ -1,10 +1,22 @@
 package com.example.recipe.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "recipes")
@@ -57,6 +69,20 @@ public class Recipe {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    // 既存のフィールド群の下に追加
+    @Column(name = "reading")
+    private String reading;
+
+    // Getter / Setter を追加（Lombok の @Data を使っている場合は自動生成されるため不要）
+    public String getReading() {
+        return reading;
+    }
+    public void setReading(String reading) {
+        this.reading = reading;
+    }
+
+
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -111,3 +137,5 @@ public class Recipe {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
+
+

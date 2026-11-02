@@ -52,7 +52,8 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- 日本語形態素解析 -->
+
+    <!-- 日本語形態素解析 Kuromoji -->
     <dependency>
       <groupId>com.atilika.kuromoji</groupId>
       <artifactId>kuromoji-ipadic</artifactId>
