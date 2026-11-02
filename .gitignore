@@ -1,0 +1,15 @@
+### Java & Maven ビルド生成物 ###
+target/
+*.class
+
+### H2 データベースファイル ###
+data/
+*.mv.db
+*.trace.db
+
+### VS Code 設定フォルダ ###
+.vscode/
+
+### OS 一時ファイル ###
+.DS_Store
+Thumbs.db
