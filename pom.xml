@@ -52,11 +52,6 @@
       <scope>runtime</scope>
     </dependency>
 
-<!-- H2 Console 有効化用（演習環境標準） -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-h2console</artifactId>
-        </dependency>
 
     <!-- 日本語形態素解析 Kuromoji -->
     <dependency>

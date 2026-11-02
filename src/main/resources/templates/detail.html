@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${recipe.title} + ' | My Recipes'">レシピ詳細 | My Recipes</title>
+  <!-- Google Fonts: Kaisei Decol の読み込み設定 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body class="recipe-detail-page">
+  <header class="site-header">
+    <div class="brand-wrap">
+      <!-- フェスティバルアニメーション付きロゴ -->
+      <a class="brand festival" th:href="@{/recipes}" href="index.html">
+        <span class="letter">My Recipes</span>
+        <span class="circle circle1"></span>
+        <span class="circle circle2"></span>
+        <span class="circle circle3"></span>
+        <span class="circle circle4"></span>
+        <span class="circle circle5"></span>
+      </a>
+    </div>
+    <a class="header-back" th:href="@{/recipes}" href="index.html">← レシピ一覧へ戻る</a>
+  </header>
+
+  <main class="page-shell">
+    <!-- 写真とメモを縦に並べるエリア -->
+    <section class="hero-single-wrap">
+      <div class="hero-photo-wrap">
+        <img class="hero-photo"
+            th:src="${recipe.image}"
+            src="images/fish.png.jpg"
+            alt="料理の写真">
+
+        <!-- 写真の上に重ねるタイトル・メタ情報 -->
+        <div class="photo-overlay-content">
+          <p class="eyebrow"><span aria-hidden="true">●</span> <span th:text="${recipe.category}">主菜</span></p>
+          <h1 class="title-zoom" th:text="${recipe.title}">鮭の塩焼き定食</h1>
+          <div class="photo-overlay-meta">
+            <span class="meta-item"><span>◷</span> 約<span th:text="${recipe.cookingTime}">25</span>分</span>
+            <span class="meta-item star-rating" th:aria-label="'評価 ' + ${recipe.favoriteLevel} + ' / 5'">
+              <th:block th:text="${T(java.lang.Math).min(T(java.lang.Math).max(recipe.favoriteLevel, 0), 5) == 5 ? '★★★★★' : 
+                                (T(java.lang.Math).min(T(java.lang.Math).max(recipe.favoriteLevel, 0), 5) == 4 ? '★★★★☆' : 
+                                (T(java.lang.Math).min(T(java.lang.Math).max(recipe.favoriteLevel, 0), 5) == 3 ? '★★★☆☆' : 
+                                (T(java.lang.Math).min(T(java.lang.Math).max(recipe.favoriteLevel, 0), 5) == 2 ? '★★☆☆☆' : 
+                                (T(java.lang.Math).min(T(java.lang.Math).max(recipe.favoriteLevel, 0), 5) == 1 ? '★☆☆☆☆' : '☆☆☆☆☆'))))}">★★★★☆</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 写真のすぐ下に配置したメモカード -->
+      <div class="note-card">
+        <p class="note-title"><span aria-hidden="true">✎</span> メモ</p>
+        <p>材料と作り方を確認して、おいしい時間を楽しみましょう。</p>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <!-- 材料・分量セクション -->
+      <div class="ingredients-section">
+        <!-- 右上の植物の線画 -->
+        <svg class="doodle-branch" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 85 Q48 53 82 14" />
+            <path d="M33 68 Q15 49 12 36 Q31 40 39 59" />
+            <path d="M44 57 Q43 35 55 23 Q62 43 50 53" />
+            <path d="M56 43 Q75 42 87 49 Q69 61 56 48" />
+          </g>
+        </svg>
+
+        <div class="section-heading">
+          <span class="heading-doodle" aria-hidden="true">🥗</span>
+          <div>
+            <h2>材料・分量</h2>
+            <span class="section-subtitle">INGREDIENTS</span>
+          </div>
+        </div>
+        
+        <ul class="ingredient-list">
+          <li th:each="ingredient : ${#strings.arraySplit(recipe.ingredients, '\n')}">
+            <span th:text="${#strings.substringBefore(ingredient, ':')}">生鮭</span>
+            <span th:text="${#strings.contains(ingredient, ':') ? #strings.substringAfter(ingredient, ':') : ''}">2切れ</span>
+          </li>
+        </ul>
+
+        <!-- 左下：静止したシンプルなハーブ・植物のイラスト -->
+        <svg class="doodle-herb" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40 70 Q40 30 40 10" />
+            <path d="M40 55 Q25 45 20 30 Q35 35 40 55 Z" />
+            <path d="M40 45 Q55 35 60 20 Q45 25 40 45 Z" />
+            <path d="M40 30 Q28 20 25 10 Q35 15 40 30 Z" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 作り方セクション -->
+      <div class="instructions-section note-peel-card">
+        <div class="section-heading">
+          <span class="heading-doodle" aria-hidden="true">📝</span>
+          <div>
+            <h2>作り方</h2>
+            <span class="section-subtitle">METHOD / MEMO</span>
+          </div>
+        </div>
+        
+        <div class="instruction-body-wrap">
+          <ol class="instruction-list">
+            <li th:each="step, stat : ${#strings.arraySplit(recipe.instructions, '\n')}">
+              <span class="step-number" th:text="${#numbers.formatInteger(stat.count, 2)}">01</span>
+              <p th:text="${step}">材料を準備し、手順に沿って調理します。</p>
+            </li>
+          </ol>
+        </div>
+
+        <!-- 右下のめくれる紙のコーナー＆横並びのボタン -->
+        <div class="peel-reveal-container">
+          <div class="doodle-corner-wrap" aria-hidden="true">
+            <div class="peel-flap"></div>
+          </div>
+          <div class="peel-reveal-actions">
+            <a class="button button-peel-edit"
+              th:href="@{/recipes/{id}/edit(id=${recipe.id})}" href="edit.html">✏️ 編集する</a>
+            <button class="button button-danger" type="button" onclick="openDeleteModal()">✕ 削除する</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="detail-footer">
+      <span class="footer-flower" aria-hidden="true">✿</span>
+      <span class="footer-label">MY RECIPES <span>/</span> RECIPE DETAIL</span>
+    </footer>
+  </main>
+
+  <!-- 削除確認モーダル -->
+  <div class="modal-backdrop" id="deleteModal" aria-hidden="true">
+    <section class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+      <button class="modal-close" type="button" aria-label="閉じる" onclick="closeDeleteModal()">×</button>
+      <p class="modal-eyebrow"><span aria-hidden="true">♧</span> CONFIRM DELETE</p>
+      <h2 id="deleteTitle">レシピを削除しますか？</h2>
+      <p class="modal-message">
+        「<span th:text="${recipe.title}">レシピ名</span>」を削除します。<br>
+        削除したレシピは元に戻せません。
+      </p>
+      <div class="modal-actions">
+        <button class="button button-outline" type="button" onclick="closeDeleteModal()">キャンセル</button>
+        <form th:action="@{/recipes/{id}/delete(id=${recipe.id})}" action="#" method="post">
+          <button class="button button-danger" type="submit">削除する</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function openDeleteModal() {
+      const modal = document.getElementById('deleteModal');
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDeleteModal() {
+      const modal = document.getElementById('deleteModal');
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('deleteModal').addEventListener('click', function (event) {
+      if (event.target === this) closeDeleteModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeDeleteModal();
+    });
+  </script>
+</body>
+</html>

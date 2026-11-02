@@ -11,4 +11,6 @@ import com.example.recipe.entity.Recipe;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findByTitleContaining(String keyword, Sort sort);
+    List<Recipe> findAllByOrderByUpdatedAtDesc();
+    List<Recipe> findByCategoryOrderByUpdatedAtDesc(String category);
 }

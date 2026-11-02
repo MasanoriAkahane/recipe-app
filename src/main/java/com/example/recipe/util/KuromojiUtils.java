@@ -1,19 +1,15 @@
 package com.example.recipe.util;
 
-import java.util.List;
-
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
 
 public class KuromojiUtils {
 
-    // Tokenizerは生成コストがあるためシングルトン（1つだけ保持）で再利用
     private static final Tokenizer TOKENIZER = new Tokenizer();
 
-    /**
-     * 文字列（漢字・ひらがな・混在）をカタカナの読みに変換する
-     * 例: "玉ねぎ" -> "タマネギ", "玉葱" -> "タマネギ", "たまねぎ" -> "タマネギ"
-     */
+    private KuromojiUtils() {
+    }
+
     public static String toKatakanaReading(String text) {
         if (text == null || text.isBlank()) {
             return "";
@@ -29,6 +25,21 @@ public class KuromojiUtils {
                 reading.append(tokenReading);
             }
         }
-        return reading.toString();
+
+        return hiraganaToKatakana(result.toString());
+    }
+
+    private static String hiraganaToKatakana(String text) {
+        StringBuilder result = new StringBuilder();
+
+        for (char c : text.toCharArray()) {
+            if (c >= 'ぁ' && c <= 'ゖ') {
+                result.append((char) (c + 0x60));
+            } else {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
     }
 }
