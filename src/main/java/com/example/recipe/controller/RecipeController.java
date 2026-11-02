@@ -2,6 +2,7 @@ package com.example.recipe.controller;
 
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
+import com.example.recipe.util.KuromojiUtils;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -96,8 +96,7 @@ public class RecipeController {
     @PostMapping("/recipes/{id}/update")
     public String updateRecipe(@PathVariable Long id,
                                @ModelAttribute Recipe recipe,
-                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                               @RequestParam(value = "currentImage", required = false) String currentImage)
+                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)
             throws IOException {
 
         Recipe existingRecipe = recipeRepository.findById(id).orElse(null);
@@ -112,18 +111,17 @@ public class RecipeController {
         existingRecipe.setIngredients(recipe.getIngredients());
         existingRecipe.setInstructions(recipe.getInstructions());
 
+        existingRecipe.setReading(KuromojiUtils.toKatakanaReading(recipe.getTitle()));
+        existingRecipe.setIngredientsReading(KuromojiUtils.toKatakanaReading(recipe.getIngredients()));
+
         if (imageFile != null && !imageFile.isEmpty()) {
             String base64Image = "data:" + imageFile.getContentType() + ";base64," +
                     Base64.getEncoder().encodeToString(imageFile.getBytes());
             existingRecipe.setImage(base64Image);
-        } else {
-            existingRecipe.setImage(currentImage);
         }
 
-        existingRecipe.setCreatedAt(existingRecipe.getCreatedAt());
-        existingRecipe.setUpdatedAt(LocalDateTime.now());
-
         recipeRepository.save(existingRecipe);
-        return "redirect:/recipes/" + id;
+        return "redirect:/recipes";
     }
+
 }

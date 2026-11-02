@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <a th:href="@{/recipes/{id}(id=${recipe.id})}" class="back-link">← 詳細画面へ戻る</a>
+  <a th:href="@{/recipes}" class="back-link">← レシピ一覧へ戻る</a>
   <h1>レシピを編集</h1>
 
   <form th:action="@{/recipes/{id}/update(id=${recipe.id})}" th:object="${recipe}"
@@ -45,7 +45,6 @@
         <input type="file" name="imageFile" id="imageInput" accept="image/*"
                onchange="previewImage(event)" style="display: none;">
       </label>
-      <input type="hidden" name="currentImage" th:value="${recipe.image}">
     </div>
 
     <div class="form-input-panel">
@@ -93,7 +92,7 @@
       </div>
 
       <div class="form-actions">
-        <a th:href="@{/recipes/{id}(id=${recipe.id})}" class="button button-quiet">キャンセル</a>
+        <a th:href="@{/recipes}" class="button button-quiet">キャンセル</a>
         <button type="submit" class="button button-primary">変更を保存</button>
       </div>
     </div>

@@ -19,6 +19,10 @@ public class Recipe {
     @Column(nullable = false, length = 100)
     private String title;
 
+    @Lob
+    @Column(name = "reading", columnDefinition = "TEXT")
+    private String reading;
+
     @NotBlank
     @Column(nullable = false)
     private String category;
@@ -39,6 +43,10 @@ public class Recipe {
     private String ingredients;
 
     @Lob
+    @Column(name = "ingredients_reading", columnDefinition = "TEXT")
+    private String ingredientsReading;
+
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String instructions;
 
@@ -56,7 +64,7 @@ public class Recipe {
 
     public Recipe() {}
 
-    public Recipe(String title, String category, Integer cookingTime, Integer favoriteLevel, 
+    public Recipe(String title, String category, Integer cookingTime, Integer favoriteLevel,
                   String ingredients, String instructions, String image) {
         this.title = title;
         this.category = category;
@@ -73,6 +81,9 @@ public class Recipe {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
+    public String getReading() { return reading; }
+    public void setReading(String reading) { this.reading = reading; }
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
@@ -84,6 +95,9 @@ public class Recipe {
 
     public String getIngredients() { return ingredients; }
     public void setIngredients(String ingredients) { this.ingredients = ingredients; }
+
+    public String getIngredientsReading() { return ingredientsReading; }
+    public void setIngredientsReading(String ingredientsReading) { this.ingredientsReading = ingredientsReading; }
 
     public String getInstructions() { return instructions; }
     public void setInstructions(String instructions) { this.instructions = instructions; }

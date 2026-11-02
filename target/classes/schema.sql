@@ -1,12 +1,14 @@
 CREATE TABLE IF NOT EXISTS recipes(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
+    reading CLOB,
     category VARCHAR(50) NOT NULL,
-    cookingTime INTEGER NOT NULL,
-    favoriteLevel INTEGER NOT NULL,
+    cooking_time INTEGER NOT NULL,
+    favorite_level INTEGER NOT NULL,
     ingredients CLOB,
+    ingredients_reading CLOB,
     instructions CLOB,
     image CLOB,
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
