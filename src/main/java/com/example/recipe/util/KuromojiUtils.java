@@ -2,6 +2,7 @@ package com.example.recipe.util;
 
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
+import java.util.List; // 1. importを追加
 
 public class KuromojiUtils {
 
@@ -26,7 +27,8 @@ public class KuromojiUtils {
             }
         }
 
-        return hiraganaToKatakana(result.toString());
+        // 2. 変数名を reading.toString() に修正
+        return hiraganaToKatakana(reading.toString());
     }
 
     private static String hiraganaToKatakana(String text) {
