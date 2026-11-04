@@ -24,7 +24,10 @@
         <span class="circle circle5"></span>
       </a>
     </div>
-    <a class="header-back" th:href="@{/recipes}" href="index.html">← レシピ一覧へ戻る</a>
+    <div class="detail-header-actions">
+      <a class="header-back" th:href="@{/recipes}" href="/recipes">← レシピ一覧へ戻る</a>
+      <a class="detail-header-edit" th:href="@{/recipes/{id}/edit(id=${recipe.id})}" href="/recipes/1/edit">✎ レシピを編集</a>
+    </div>
   </header>
 
   <main class="page-shell">
