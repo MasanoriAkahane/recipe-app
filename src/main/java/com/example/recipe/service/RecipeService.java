@@ -1,10 +1,8 @@
 package com.example.recipe.service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-
 
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
@@ -18,89 +16,56 @@ public class RecipeService {
     }
 
 
-    //==========================================
+    //====================================================================================
     // 用途：
-    // 検索結果を2回実施する。
-    //==========================================
-    public List<Recipe> concatRequest(String keyword, String category,int sort){
+    // 検索語句、カテゴリ、ソート方法を基に、DBへのメソッドを作成する。
+    // Conrollerから呼び出される。
+    //====================================================================================
+    public List<Recipe> searchDb(String keyword, String category,int sort){
         List<Recipe> list;
 
-        // "すべて"が選択された場合の手続き
-        if ("すべて".equals(category)){
-                    switch (sort){
-                        // 元コードはRepository側のAnd条件に対して引数が1つだったため、同じkeywordを2つ渡す
-                        // case 0 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(keyword);}
-                        case 0 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(keyword,keyword);}
-                        // case 1 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByFavoriteLevelDesc(keyword);}
-                        case 1 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByFavoriteLevelDesc(keyword,keyword);}
-                        // case 2 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByCookingTime(keyword);}
-                        case 2 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByCookingTime(keyword,keyword);}
-                        // case 3 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByTitle(keyword);}
-                        case 3 -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByTitle(keyword,keyword);}
-                            // ソートが見初期化の場合の処理　※0-3以外が入ったとき。
-                        // default -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(keyword);
-                        default -> {list = recipeRepository.findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(keyword,keyword);
-                        System.out.println("sort方法不明 ここはNullは想定されていない。");}
-            }
+        if ("すべて".equals(category)){// "すべて"が選択された場合の手続き ※nullは呼び出し前に"すべて"に変換されてからくる。
+            List<Recipe> list1 = recipeRepository.findByReadingContaining(keyword);
+            List<Recipe> list2 = recipeRepository.findByIngredientsReadingContaining(keyword);
+            list = concatRequestAndSort(sort, list1, list2);
         }
-        // カテゴリに"すべて"以外が入力された場合の手続き
-        else{
-            List<Recipe> list1 = recipeRepository.findByReadingAndCategory(keyword,category);
-            List<Recipe> list2 = recipeRepository.findByIngredientsReadingAndCategory(keyword,category);
-            switch (sort){
-                case 0 -> {list = concatRequestUpdatedAt(list1,list2);}
-                case 1 -> {list = RecipeService.concatRequestFavoriteLevel(list1,list2);}
-                case 2 -> {list = RecipeService.concatRequestCookingTime(list1,list2);}
-                case 3 -> {list = RecipeService.concatRequestTitle(list1,list2);}
-                    // ソートが見初期化の場合の処理　※0-3以外が入ったとき。
-                default -> {list = concatRequestUpdatedAt(list1,list2);
-                        System.out.println("sort方法不明 ここはNullは想定されていない。");}
-                }
+        else if ("その他".equals(category)){// カテゴリに"すべて""その他"以外が入力された場合の手続き
+            List<Recipe> list1 = recipeRepository.findByCategoryNotInAndReadingContaining(List.of("主菜", "副菜", "汁物"),keyword);
+            List<Recipe> list2 = recipeRepository.findByCategoryNotInAndIngredientsReadingContaining(List.of("主菜", "副菜", "汁物"),keyword);
+            list = concatRequestAndSort(sort, list1, list2);
+        }
+        else{// 主菜副菜汁物が来た時に動作する。
+            List<Recipe> list1 = recipeRepository.findByReadingContainingAndCategory(keyword,category);
+            List<Recipe> list2 = recipeRepository.findByIngredientsReadingContainingAndCategory(keyword,category);
+            list = concatRequestAndSort(sort, list1, list2);
         }
         return list;
     }
 
-    //==========================================
+    //====================================================================================
     // 用途：
-    // 検索結果リストを接続する
-    // 並び替える。
-    //==========================================
-    // 更新日時が新しい順（デフォルト: updatedAt,desc）
-    public static List<Recipe> concatRequestUpdatedAt(List<Recipe> list1,List<Recipe> list2){
-        List<Recipe> list = Stream
-        .concat(list1.stream(),list2.stream())
-        .distinct()
-        .sorted(Comparator.comparing(Recipe::getUpdatedAt).reversed())
-        // AIは無理にNull対策を入れる必要はないと示している。更新日時はNullにならない認識。
-        .toList();
-        return list;
-    }
-    // お気に入り度が高い順（favoriteLevel,desc）
-    public static List<Recipe> concatRequestFavoriteLevel(List<Recipe> list1,List<Recipe> list2){
-        List<Recipe> list = Stream
-        .concat(list1.stream(),list2.stream())
-        .distinct()
-        .sorted(Comparator.comparing(Recipe::getFavoriteLevel).reversed())
-        .toList();
-        return list;
-    }
-    // 調理時間が短い順（cookingTime,asc）
-    public static List<Recipe> concatRequestCookingTime(List<Recipe> list1,List<Recipe> list2){
-        List<Recipe> list = Stream
-        .concat(list1.stream(),list2.stream())
-        .distinct()
-        .sorted(Comparator.comparing(Recipe::getCookingTime))
-        .toList();
-        return list;
-    }
-    // 料理名順（title,asc）
-    public static List<Recipe> concatRequestTitle(List<Recipe> list1,List<Recipe> list2){
-        List<Recipe> list = Stream
-        .concat(list1.stream(),list2.stream())
-        .distinct()
-        .sorted(Comparator.comparing(Recipe::getTitle))
-        .toList();
-        return list;
-    }
+    // 2種類のlistを接続する
+    // 接続後のリストをsort値を参照して並び替える
+    // 更新日時が新しい順（デフォルト: updatedAt desc）
+    //====================================================================================
+    private static List<Recipe> concatRequestAndSort(int sort, List<Recipe> list1, List<Recipe> list2) {
+
+    Comparator<Recipe> comparator = switch (sort) {
+        case 0 -> Comparator.comparing(Recipe::getUpdatedAt).reversed();// 更新日時が新しい順（降順）
+        case 1 -> Comparator.comparing(Recipe::getUpdatedAt);// 更新日時が新しい順（昇順）
+        case 2 -> Comparator.comparing(Recipe::getFavoriteLevel).reversed();// お気に入り度が高い順（降順）
+        case 3 -> Comparator.comparing(Recipe::getFavoriteLevel);// お気に入り度が高い順（昇順）
+        case 4 -> Comparator.comparing(Recipe::getCookingTime).reversed();// 調理時間が短い順（降順）
+        case 5 -> Comparator.comparing(Recipe::getCookingTime);// 調理時間が短い順（昇順）
+        case 6 -> Comparator.comparing(Recipe::getTitle).reversed();// 料理名順（降順）
+        case 7 -> Comparator.comparing(Recipe::getTitle);// 料理名順（昇順）
+        // ソートが未初期化の場合の処理
+        default -> Comparator.comparing(Recipe::getUpdatedAt).reversed();// ここは所定の数字以外が来ることは想定していない。
+    };
+    return Stream.concat(list1.stream(), list2.stream())
+            .distinct()
+            .sorted(comparator)
+            .toList();
+}
 
 }
