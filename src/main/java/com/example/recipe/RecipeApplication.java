@@ -23,7 +23,6 @@ public class RecipeApplication {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                // Java 18以降推奨の ProcessBuilder（または配列渡し）に変更
                 new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", url).start();
             }
         } catch (Exception ignored) {
