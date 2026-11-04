@@ -1,110 +1,101 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>レシピ編集 - レシピ管理アプリ</title>
-  <style>
-    body { font-family: 'Yu Gothic', sans-serif; background: #faf7f2; color: #333; margin: 0; padding: 24px; }
-    .back-link { text-decoration: none; color: #777; font-size: 14px; display: inline-block; margin-bottom: 12px; }
-    h1 { margin: 0 0 20px; font-size: 22px; color: #2c3e50; }
-    .recipe-form-layout { display: flex; gap: 24px; background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #e8e2d8; max-width: 900px; }
-    .form-photo-panel { width: 280px; flex-shrink: 0; text-align: center; }
-    .photo-preview-box { width: 100%; height: 220px; border-radius: 12px; border: 2px dashed #d5cec5; background: #fdfbf7; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 12px; }
-    .photo-preview-box img { width: 100%; height: 100%; object-fit: cover; }
-    .button-select-photo { display: inline-block; padding: 8px 16px; background: #e8e2d8; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
-    .form-input-panel { flex: 1; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 13px; color: #444; }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group select, .form-group textarea {
-      width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
-    }
-    .form-row-three { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-    .button { padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
-    .button-primary { background: #d35400; color: white; }
-    .button-quiet { background: #e0dbd1; color: #555; }
-    .required { color: #c0392b; }
-  </style>
+  <title>Edit Recipe | Recipe Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&amp;family=Epunda+Sans:ital,wght@0,300..900;1,300..900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
 </head>
-<body>
-  <a th:href="@{/recipes}" class="back-link">← レシピ一覧へ戻る</a>
-  <h1>レシピを編集</h1>
+<body class="recipe-ui recipe-form-page">
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand" href="/recipes" th:href="@{/recipes}" aria-label="レシピ一覧へ">
+        <span class="site-brand-mark" aria-hidden="true">R<span>.</span></span>
+        <span class="site-brand-text">Recipe Manager</span>
+      </a>
+      <a class="header-text-link" href="/recipes" th:href="@{/recipes}">← 一覧に戻る</a>
+    </div>
+  </header>
 
-  <form th:action="@{/recipes/{id}/update(id=${recipe.id})}" th:object="${recipe}"
-        method="post" enctype="multipart/form-data" class="recipe-form-layout">
-    <div class="form-photo-panel">
-      <div class="photo-preview-box">
-        <img id="imagePreview" th:if="${recipe.image != null and !recipe.image.isEmpty()}"
-             th:src="${recipe.image}" alt="料理写真">
-        <span id="noImage" th:if="${recipe.image == null or recipe.image.isEmpty()}"
-              style="color:#999;font-size:13px;">No Image</span>
-      </div>
-      <label class="button-select-photo">
-        📷 料理写真を変更
-        <input type="file" name="imageFile" id="imageInput" accept="image/*"
-               onchange="previewImage(event)" style="display: none;">
-      </label>
+  <main class="page-container form-page-container">
+    <div class="form-page-heading">
+      <p class="eyebrow">EDIT RECIPE</p>
+      <h1>Edit Recipe</h1>
     </div>
 
-    <div class="form-input-panel">
-      <div class="form-group">
-        <label for="title">料理名 <span class="required">*</span></label>
-        <input type="text" id="title" th:field="*{title}" placeholder="例: 鮭の塩焼き定食" required>
-      </div>
+    <form th:action="@{/recipes/{id}/update(id=${recipe.id})}" th:object="${recipe}" action="/recipes/1/update" method="post"
+          enctype="multipart/form-data" class="recipe-form-layout">
+      <aside class="form-photo-panel">
+        <h2 class="form-panel-title"><span class="panel-number">01</span> Photo</h2>
+        <div class="photo-preview-box">
+          <img id="imagePreview" th:if="${recipe.image != null and !recipe.image.isEmpty()}"
+                   th:src="${recipe.image}" alt="現在の料理写真">
+              <span id="noImage" th:if="${recipe.image == null or recipe.image.isEmpty()}" class="no-image-label">写真は登録されていません</span>
+        </div>
+        <label class="button-select-photo" for="imageInput">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 7h5l2-3h4l2 3h5v13H3V7Z"/><circle cx="12" cy="13" r="4"/></svg>
+          写真を変更
+        </label>
+        <input class="file-input" type="file" name="imageFile" id="imageInput" accept="image/*" onchange="previewImage(event)">
+        <p class="photo-hint">写真を変更しない場合は、選択せずに保存してください。</p>
+      </aside>
 
-      <div class="form-group">
-        <label for="ingredients">材料・分量 (1行に1項目)</label>
-        <textarea id="ingredients" th:field="*{ingredients}" rows="3"
-                  placeholder="生鮭 2切れ&#10;塩 少々&#10;大根おろし 適量"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="instructions">作り方 (1行に1ステップ)</label>
-        <textarea id="instructions" th:field="*{instructions}" rows="3"
-                  placeholder="1. 鮭に塩を振る&#10;2. グリルで焼く"></textarea>
-      </div>
-
-      <div class="form-row-three">
+      <div class="form-input-panel">
+        <h2 class="form-panel-title"><span class="panel-number">02</span> Recipe Details</h2>
         <div class="form-group">
-          <label for="category">カテゴリ</label>
-          <select id="category" th:field="*{category}">
-            <option value="主菜">主菜</option>
-            <option value="副菜">副菜</option>
-            <option value="汁物">汁物</option>
-            <option value="その他">その他</option>
-          </select>
+          <label for="title">料理名 <span class="required">*</span></label>
+          <input type="text" id="title" th:field="*{title}" placeholder="例：鮭の塩焼き" required maxlength="100">
+        </div>
+        <div class="form-row-three">
+          <div class="form-group">
+            <label for="category">カテゴリ</label>
+            <select id="category" th:field="*{category}">
+              <option value="主菜">主菜</option><option value="副菜">副菜</option>
+              <option value="汁物">汁物</option><option value="その他">その他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cookingTime">調理時間（分）</label>
+            <input type="number" id="cookingTime" th:field="*{cookingTime}" min="1"  required>
+          </div>
+          <div class="form-group">
+            <label for="favoriteLevel">お気に入り度</label>
+            <select id="favoriteLevel" th:field="*{favoriteLevel}">
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★☆</option>
+              <option value="3">★★★☆☆</option>
+              <option value="2">★★☆☆☆</option>
+              <option value="1">★☆☆☆☆</option>
+            </select>
+          </div>
         </div>
         <div class="form-group">
-          <label for="cookingTime">時間 (分)</label>
-          <input type="number" id="cookingTime" th:field="*{cookingTime}" min="1" required>
+          <label for="ingredients">材料 <span class="optional-note">1行に1つずつ入力</span></label>
+          <textarea id="ingredients" th:field="*{ingredients}" rows="5"
+                    placeholder="鮭 2切れ&#10;塩 少々&#10;大根 適量"></textarea>
         </div>
         <div class="form-group">
-          <label for="favoriteLevel">お気に入り度</label>
-          <select id="favoriteLevel" th:field="*{favoriteLevel}">
-            <option value="5">★★★★★ (5)</option>
-            <option value="4">★★★★☆ (4)</option>
-            <option value="3">★★★☆☆ (3)</option>
-            <option value="2">★★☆☆☆ (2)</option>
-            <option value="1">★☆☆☆☆ (1)</option>
-          </select>
+          <label for="instructions">作り方 <span class="optional-note">1行に1手順ずつ入力</span></label>
+          <textarea id="instructions" th:field="*{instructions}" rows="6"
+                    placeholder="鮭に塩を振る&#10;両面を焼く&#10;皿に盛り付ける"></textarea>
+        </div>
+        <div class="form-actions">
+          <a class="pill-button pill-button-secondary" href="/recipes" th:href="@{/recipes}">キャンセル</a>
+          <button class="pill-button pill-button-primary" type="submit">変更を保存</button>
         </div>
       </div>
-
-      <div class="form-actions">
-        <a th:href="@{/recipes}" class="button button-quiet">キャンセル</a>
-        <button type="submit" class="button button-primary">変更を保存</button>
-      </div>
-    </div>
-  </form>
-
+    </form>
+  </main>
   <script>
     function previewImage(event) {
       const input = event.target;
       if (input.files && input.files[0]) {
         const file = input.files[0];
         if (!file.type.startsWith('image/')) {
-          alert('画像ファイルを選択してください');
+          alert('画像ファイルを選択してください。');
           input.value = '';
           return;
         }
@@ -116,7 +107,7 @@
           } else {
             preview = document.createElement('img');
             preview.id = 'imagePreview';
-            preview.alt = '料理写真';
+            preview.alt = 'Recipe photo';
             preview.src = e.target.result;
             document.querySelector('.photo-preview-box').appendChild(preview);
             const noImage = document.getElementById('noImage');

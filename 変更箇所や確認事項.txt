@@ -177,3 +177,9 @@ BUILD SUCCESSを確認。
 - 編集画面が開く
 - 編集保存ができる
 - 起動エラーが出ない
+
+HTMLおよびCSSが動かない場合
+- .\mvnw.cmd clean spring-boot:run
+
+H2consoleが動かなかった人
+- .\mvnw.cmd -U clean spring-boot:run

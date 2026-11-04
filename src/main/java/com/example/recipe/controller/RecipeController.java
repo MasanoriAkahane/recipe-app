@@ -85,6 +85,26 @@ public class RecipeController {
         return "redirect:/recipes";
     }
 
+    // 詳細表示
+    @GetMapping("/recipes/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        Recipe recipe = recipeRepository.findById(id).orElse(null);
+        if (recipe == null) {
+            return "redirect:/recipes";
+        }
+        model.addAttribute("recipe", recipe);
+        return "detail";
+    }
+
+    // 削除
+    @PostMapping("/recipes/{id}/delete")
+    public String deleteRecipe(@PathVariable Long id) {
+        if (recipeRepository.existsById(id)) {
+            recipeRepository.deleteById(id);
+        }
+        return "redirect:/recipes";
+    }
+
     // 編集画面表示処理
     @GetMapping("/recipes/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {

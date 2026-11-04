@@ -1,108 +1,127 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>レシピ一覧 | My Recipes</title>
-  <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+  <title>Recipes | Recipe Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&amp;family=Epunda+Sans:ital,wght@0,300..900;1,300..900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
 </head>
-<body class="recipe-list-page">
+<body class="recipe-ui recipe-list-page">
   <header class="site-header">
-    <a class="site-logo" href="/recipes" th:href="@{/recipes}" aria-label="My Recipes トップへ">
-      <span>MY</span>
-      <strong>RECIPES</strong>
-    </a>
-
-    <nav class="site-nav" aria-label="メインメニュー">
-      <a class="nav-link is-current" href="/recipes" th:href="@{/recipes}" aria-current="page">レシピ一覧</a>
-      <a class="nav-link" href="#recipe-gallery">レシピを見る</a>
-    </nav>
-
-    <a class="add-recipe-button" href="/recipes/new" th:href="@{/recipes/new}">＋ レシピを登録</a>
+    <div class="site-header-inner">
+      <a class="site-brand" href="/recipes" th:href="@{/recipes}" aria-label="レシピ一覧へ">
+        <span class="site-brand-mark" aria-hidden="true">R<span>.</span></span>
+        <span class="site-brand-text">Recipe Manager</span>
+      </a>
+      <a class="button button-primary header-register" href="/recipes/new" th:href="@{/recipes/new}">
+        <span aria-hidden="true">＋</span> レシピを登録
+      </a>
+    </div>
   </header>
 
-  <main class="page-content" id="recipe-gallery">
-    <div class="section-heading">
-      <div>
-        <p class="section-eyebrow">OUR COOKBOOK</p>
-        <h1>お気に入りのレシピ<span class="heading-dot">.</span></h1>
-        <p class="section-caption">今日の献立を、ここから。</p>
+  <main class="page-container">
+    <section class="collection-intro" aria-labelledby="list-heading">
+      <div class="intro-row">
+        <h1 id="list-heading">Recipes</h1>
+        
       </div>
-      <p class="recipe-count"><span th:text="${recipes != null ? #lists.size(recipes) : 0}">4</span> 件</p>
-    </div>
-
-    <div class="recipe-toolbar" aria-label="レシピの絞り込みと並び替え">
-      <div class="category-filters" role="group" aria-label="カテゴリで絞り込み">
-        <button type="button" class="category-button is-active">すべて</button>
-        <button type="button" class="category-button">主菜</button>
-        <button type="button" class="category-button">副菜</button>
-        <button type="button" class="category-button">汁物</button>
-        <button type="button" class="category-button">その他</button>
-      </div>
-
-      <details class="sort-control">
-        <summary class="sort-toggle" aria-label="並び替えの項目を表示">
-          <svg class="sort-lines" viewBox="0 0 28 28" fill="none" stroke="currentColor"
-               stroke-width="2.1" stroke-linecap="round" aria-hidden="true">
-            <path d="M3 5h22M3 11h17M3 17h12M3 23h7" />
-          </svg>
-          <span class="sort-current">並び替え</span>
-          <svg class="sort-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m4 6 4 4 4-4" />
-          </svg>
-        </summary>
-        <div class="sort-menu">
-          <button type="button" class="sort-option">更新日時：新しい順</button>
-          <button type="button" class="sort-option">更新日時：古い順</button>
-          <button type="button" class="sort-option">評価：高い順</button>
-          <button type="button" class="sort-option">評価：低い順</button>
-        </div>
-      </details>
-    </div>
-
-    <section class="recipe-grid" aria-label="レシピ一覧"
-             th:unless="${recipes == null or #lists.isEmpty(recipes)}">
-      <article class="recipe-card" th:each="recipe : ${recipes}">
-        <div class="recipe-image-wrap">
-          <a class="recipe-photo-link" href="/recipes/1"
-             th:href="@{/recipes/{id}(id=${recipe.id})}"
-             th:aria-label="${recipe.title} + 'の詳細を見る'" aria-label="レシピの詳細を見る">
-            <img class="recipe-image" th:if="${recipe.image != null and !recipe.image.isEmpty()}"
-                 th:src="${recipe.image}" th:alt="${recipe.title} + 'の写真'" alt="料理の写真">
-            <div class="recipe-image-placeholder" th:unless="${recipe.image != null and !recipe.image.isEmpty()}">
-              <span class="placeholder-mark" aria-hidden="true">✳</span>
-              <span>NO PHOTO</span>
-            </div>
-            <div class="image-rating" th:aria-label="'お気に入り度 ' + ${recipe.favoriteLevel} + ' / 5'">
-              <span class="rating-stars" aria-hidden="true" th:with="level=${recipe.favoriteLevel != null ? recipe.favoriteLevel : 0}">
-                <span th:each="star : ${#numbers.sequence(1,5)}"
-                      th:classappend="${star <= level} ? 'is-filled' : ''">★</span>
-              </span>
-            </div>
-          </a>
-          <a class="recipe-edit-shortcut" href="/recipes/1/edit"
-             th:href="@{/recipes/{id}/edit(id=${recipe.id})}"
-             th:aria-label="${recipe.title} + 'を編集'" aria-label="レシピを編集" title="レシピを編集">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none"
-                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z" />
-            </svg>
-          </a>
-        </div>
-        <h2 class="recipe-title">
-          <a class="recipe-title-link" href="/recipes/1"
-             th:href="@{/recipes/{id}(id=${recipe.id})}" th:text="${recipe.title}">料理名</a>
-        </h2>
-      </article>
     </section>
 
-    <section class="empty-state" th:if="${recipes == null or #lists.isEmpty(recipes)}">
-      <p>まだレシピがありません。</p>
-      <a href="/recipes/new" th:href="@{/recipes/new}">最初のレシピを登録する</a>
+    <section class="collection-search" aria-label="レシピ検索">
+      <form class="search-form" method="get" action="/recipes" th:action="@{/recipes}" role="search">
+        <input type="hidden" name="category" value="すべて" th:value="${param.category != null ? param.category[0] : 'すべて'}">
+        <input type="hidden" name="sort" value="0" th:value="${param.sort != null ? param.sort[0] : '0'}">
+        <label for="recipe-search" class="sr-only">料理名・材料で検索</label>
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.6 4.6"/></svg>
+          <input id="recipe-search" type="search" name="searchText" placeholder="料理名・材料で検索" autocomplete="off"
+                 th:value="${param.searchText != null ? param.searchText[0] : ''}">
+        </div>
+        <button type="submit" class="button button-dark search-submit">Search</button>
+        <a class="search-reset" href="/recipes" th:href="@{/recipes}">Clear</a>
+      </form>
+    </section>
+
+    <section class="collection-content" aria-labelledby="all-recipes-heading">
+      <div class="collection-topline">
+        <div>
+          
+          <h2 id="all-recipes-heading">All Recipes<span class="recipe-total" th:text="${recipes != null ? #lists.size(recipes) : 0}">4</span></h2>
+        </div>
+        <div class="sort-position">
+          <form class="sort-form" action="/recipes" th:action="@{/recipes}" method="get">
+            <input type="hidden" name="searchText" value="" th:value="${param.searchText != null ? param.searchText[0] : ''}">
+            <input type="hidden" name="category" value="すべて" th:value="${param.category != null ? param.category[0] : 'すべて'}">
+            <details class="sort-dropdown">
+              <summary class="sort-trigger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M3 10h14M3 15h10M3 20h6"/></svg>
+                並び替え
+                <span class="sort-caret" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="sort-options">
+                <button type="submit" name="sort" value="0" th:classappend="${param.sort == null or param.sort[0] == '0'} ? 'is-selected' : ''">更新日時が新しい順</button>
+                <button type="submit" name="sort" value="1" th:classappend="${param.sort != null and param.sort[0] == '1'} ? 'is-selected' : ''">更新日時が古い順</button>
+                <button type="submit" name="sort" value="2" th:classappend="${param.sort != null and param.sort[0] == '2'} ? 'is-selected' : ''">評価が高い順</button>
+                <button type="submit" name="sort" value="3" th:classappend="${param.sort != null and param.sort[0] == '3'} ? 'is-selected' : ''">評価が低い順</button>
+                <button type="submit" name="sort" value="4" th:classappend="${param.sort != null and param.sort[0] == '4'} ? 'is-selected' : ''">調理時間が長い順</button>
+                <button type="submit" name="sort" value="5" th:classappend="${param.sort != null and param.sort[0] == '5'} ? 'is-selected' : ''">調理時間が短い順</button>
+              </div>
+            </details>
+          </form>
+        </div>
+      </div>
+
+      <form class="category-tabs" method="get" action="/recipes" th:action="@{/recipes}" aria-label="カテゴリで絞り込む">
+        <input type="hidden" name="searchText" value="" th:value="${param.searchText != null ? param.searchText[0] : ''}">
+        <input type="hidden" name="sort" value="0" th:value="${param.sort != null ? param.sort[0] : '0'}">
+        <button type="submit" name="category" value="すべて" th:classappend="${param.category == null or param.category[0] == 'すべて'} ? 'is-active' : ''">ALL</button>
+        <button type="submit" name="category" value="主菜" th:classappend="${param.category != null and param.category[0] == '主菜'} ? 'is-active' : ''">主菜</button>
+        <button type="submit" name="category" value="副菜" th:classappend="${param.category != null and param.category[0] == '副菜'} ? 'is-active' : ''">副菜</button>
+        <button type="submit" name="category" value="汁物" th:classappend="${param.category != null and param.category[0] == '汁物'} ? 'is-active' : ''">汁物</button>
+        <button type="submit" name="category" value="その他" th:classappend="${param.category != null and param.category[0] == 'その他'} ? 'is-active' : ''">OTHER</button>
+      </form>
+
+      <div class="recipe-grid" th:if="${recipes != null and !#lists.isEmpty(recipes)}">
+        <article class="recipe-card" th:each="recipe : ${recipes}">
+          <div class="recipe-thumb">
+            <a class="recipe-photo-link" href="/recipes/1" th:href="@{/recipes/{id}(id=${recipe.id})}" aria-label="レシピの詳細を見る" th:aria-label="'詳細を見る: ' + ${recipe.title}">
+              <img th:if="${recipe.image != null and !recipe.image.isEmpty()}" th:src="${recipe.image}" th:alt="${recipe.title}" alt="料理写真" loading="lazy">
+              <span class="recipe-photo-empty" th:unless="${recipe.image != null and !recipe.image.isEmpty()}">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 17h44v32H10zM15 17l7-7h20l7 7"/><circle cx="32" cy="32" r="10"/><path d="M17 45l10-9 7 5 8-11 8 15"/></svg>
+                <small>写真なし</small>
+              </span>
+            </a>
+            <a class="edit-shortcut" href="/recipes/1/edit" th:href="@{/recipes/{id}/edit(id=${recipe.id})}" title="編集する" aria-label="レシピを編集する" th:aria-label="'編集する: ' + ${recipe.title}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"/></svg>
+            </a>
+          </div>
+          <div class="recipe-info">
+            <p class="recipe-category" th:switch="${recipe.category}">
+          <span th:case="'主菜'">主菜</span>
+          <span th:case="'副菜'">副菜</span>
+          <span th:case="'汁物'">汁物</span>
+          <span th:case="'その他'">その他</span>
+          <span th:case="*" th:text="${recipe.category}">Category</span>
+        </p>
+            <h3 class="recipe-title"><a href="/recipes/1" th:href="@{/recipes/{id}(id=${recipe.id})}" th:text="${recipe.title}">鮭の塩焼き定食</a></h3>
+            <div class="recipe-meta">
+              <span class="recipe-stars" th:with="level=${recipe.favoriteLevel != null ? recipe.favoriteLevel : 0}" th:aria-label="'お気に入り度: ' + ${recipe.favoriteLevel} + ' / 5'">
+                <span th:each="n : ${#numbers.sequence(1,5)}" th:classappend="${n <= level} ? 'filled' : ''">★</span>
+              </span>
+              <span class="recipe-cook-time" th:if="${recipe.cookingTime != null}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span th:text="${recipe.cookingTime}">25</span> 分</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty-recipes" th:if="${recipes == null or #lists.isEmpty(recipes)}">
+        <p>条件に一致するレシピがありません。</p>
+        <a href="/recipes" th:href="@{/recipes}">すべてのレシピを表示</a>
+      </div>
     </section>
   </main>
-
 </body>
 </html>
