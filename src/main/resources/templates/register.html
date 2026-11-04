@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -26,7 +26,20 @@
     .button-quiet { background: #e0dbd1; color: #555; }
     .required { color: #c0392b; }
   </style>
+</head> -->
+
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>レシピ新規登録 - レシピ管理アプリ</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
 </head>
+
+
+
 <body>
   <a th:href="@{/recipes}" class="back-link">← レシピ一覧へ戻る</a>
   <h1>新しいレシピを登録</h1>

@@ -81,6 +81,13 @@ public class RecipeController {
             recipe.setImage("");
         }
 
+        recipe.setReading(
+            KuromojiUtils.toKatakanaReading(recipe.getTitle())
+        );
+        recipe.setIngredientsReading(
+            KuromojiUtils.toKatakanaReading(recipe.getIngredients())
+        );
+
         recipeRepository.save(recipe);
         return "redirect:/recipes";
     }

@@ -29,4 +29,16 @@ public class RecipeApplication {
             System.out.println("ブラウザ自動起動をスキップしました。手動で " + url + " を開いてください。");
         }
     }
+
+// H2 Console を強制的に有効化するサーブレット登録
+    @org.springframework.context.annotation.Bean
+    public org.springframework.boot.web.servlet.ServletRegistrationBean<org.h2.server.web.JakartaWebServlet> h2servletRegistration() {
+        org.springframework.boot.web.servlet.ServletRegistrationBean<org.h2.server.web.JakartaWebServlet> registration =
+                new org.springframework.boot.web.servlet.ServletRegistrationBean<>(new org.h2.server.web.JakartaWebServlet());
+        registration.addUrlMappings("/h2-console/*");
+        return registration;
+    }
+
+
+
 }
