@@ -1,5 +1,6 @@
 package com.example.recipe.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -10,34 +11,26 @@ import com.example.recipe.entity.Recipe;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    List<Recipe> findByTitleContaining(String keyword, Sort sort);
-    List<Recipe> findAllByOrderByUpdatedAtDesc();
-    List<Recipe> findByCategoryOrderByUpdatedAtDesc(String category);
 
     //==========================================
-    // 最新案 検索を2件実施し、リストを接続する
+    // 主菜、副菜、汁物、のどれかを検索
     //==========================================
-    List<Recipe> findByReadingAndCategory(
-    String title,
-    String category
-    );
-    List<Recipe> findByIngredientsReadingAndCategory(
-    String readingKeyword,
-    String category
-    );
+    List<Recipe> findByReadingContainingAndCategory(String keyWord, String category);
+    List<Recipe> findByIngredientsReadingContainingAndCategory(String keyWord, String category);
+
+    //==========================================
+    // 主菜、副菜、汁物、以外を検索
+    //==========================================
+    List<Recipe> findByCategoryNotInAndReadingContaining(Collection<String> categories, String keyWord);
+    List<Recipe> findByCategoryNotInAndIngredientsReadingContaining(Collection<String> categories, String keyWord);
+
     //==========================================
     // 全て検索
     //==========================================
-    // 元コードはAndで2項目を指定しているため引数が1つでは合わない
-    // List<Recipe> findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(String searchText);
-    List<Recipe> findByReadingAndIngredientsReadingOrderByUpdatedAtDesc(String reading, String ingredientsReading);
+    List<Recipe> findByReadingContaining(String keyWord);
+    List<Recipe> findByIngredientsReadingContaining(String keyWord);
 
-    // List<Recipe> findByReadingAndIngredientsReadingOrderByFavoriteLevelDesc(String searchText);
-    List<Recipe> findByReadingAndIngredientsReadingOrderByFavoriteLevelDesc(String reading, String ingredientsReading);
 
-    // List<Recipe> findByReadingAndIngredientsReadingOrderByCookingTime(String searchText);
-    List<Recipe> findByReadingAndIngredientsReadingOrderByCookingTime(String reading, String ingredientsReading);
 
-    // List<Recipe> findByReadingAndIngredientsReadingOrderByTitle(String searchText);
-    List<Recipe> findByReadingAndIngredientsReadingOrderByTitle(String reading, String ingredientsReading);
+
 }
