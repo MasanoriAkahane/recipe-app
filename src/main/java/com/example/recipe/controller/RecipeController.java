@@ -29,36 +29,28 @@ public class RecipeController {
     }
 
     @GetMapping("/")
-    public String root(
-        @RequestParam(required = false) String searchText, // 値が渡されない場合でも動作する。nullを受け取る。
-        @RequestParam(required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
-        @RequestParam(defaultValue = "0") int sort, // 値が渡されない場合、初期値0を受け取る。 int はNullを受け取れない型の為。
-        // name="item"：HTML側の要素の名前
-        // value = "item"：取得対象となるリクエストパラメータ名
-        Model model) {
-
-            List<Recipe> list;
-            //==========================================
-            // kuromojiで日本語→かなに変換。
-            //==========================================
-            String keyword = searchText;
-
-
-            if (searchText == null){keyword = "未設定";} // Nullを未設定に変換
-            if (category == null){category = "すべて";} // Nullをすべてに変換
-
-            RecipeService service = new RecipeService(recipeRepository);
-            list = service.concatRequest(keyword, category, sort);
-
-            // model.addAttribute("data", list);
-            // list.html側がrecipesを参照しているため名前を合わせる
-            model.addAttribute("recipes", list);
+    public String root(Model model) {
+            model.addAttribute("recipes", recipeRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")));
             return "list";
         }
 
     @GetMapping("/recipes")
-    public String list(Model model) {
-        model.addAttribute("recipes", recipeRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")));
+    public String list(
+        @RequestParam(name = "searchText", required = false) String searchText, // 値が渡されない場合でも動作する。nullを受け取る。
+        @RequestParam(name = "category", required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
+        @RequestParam(defaultValue = "0") int sort, // 値が渡されない場合、初期値0を受け取る。 int はNullを受け取れない型の為。
+        Model model) {
+
+        List<Recipe> list;
+        //==========================================
+        // kuromojiで日本語→かなに変換。
+        //==========================================
+        String keyword = KuromojiUtils.toKatakanaReading(searchText);
+        if (category == null){category = "すべて";} // Nullをすべてに変換
+
+        RecipeService service = new RecipeService(recipeRepository);
+        list = service.searchDb(keyword, category, sort);
+        model.addAttribute("recipes", list);
         return "list";
     }
 
@@ -89,6 +81,26 @@ public class RecipeController {
         );
 
         recipeRepository.save(recipe);
+        return "redirect:/recipes";
+    }
+
+    // 詳細表示
+    @GetMapping("/recipes/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        Recipe recipe = recipeRepository.findById(id).orElse(null);
+        if (recipe == null) {
+            return "redirect:/recipes";
+        }
+        model.addAttribute("recipe", recipe);
+        return "detail";
+    }
+
+    // 削除
+    @PostMapping("/recipes/{id}/delete")
+    public String deleteRecipe(@PathVariable Long id) {
+        if (recipeRepository.existsById(id)) {
+            recipeRepository.deleteById(id);
+        }
         return "redirect:/recipes";
     }
 
