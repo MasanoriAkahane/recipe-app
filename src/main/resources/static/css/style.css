@@ -889,7 +889,7 @@ body.recipe-ui {
 }
 
 
-/* ヒーロー写真5枚の切り替え：30秒で1周 = 1枚約6秒 */
+/* ヒーロー写真5枚の切り替え：50秒で1周 = 1枚約10秒（変更は次の50s） */
 .recipe-list-page .sample-hero {
   --hero-rotation-duration: 50s;
 }
@@ -1021,4 +1021,44 @@ body.recipe-ui {
 @media (max-width: 470px) {
   .recipe-detail-page .servings-select-row { flex-wrap: wrap; }
   .recipe-detail-page .servings-select-row select { flex: 1; }
+}
+
+
+/* 入力に問題があった場合だけ、登録・編集画面に表示する */
+.recipe-form-page .form-error-summary {
+  grid-column: 1 / -1;
+  padding: 12px 14px;
+  margin: 0 0 18px;
+  border: 1px solid #d5a99f;
+  border-radius: 6px;
+  background: #fff4f0;
+  color: #a64c45;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* 既存の半透明の丸だけをスクロールで動かす。大きさや配置は変えない。 */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .recipe-list-page .hero-image-accent-a {
+      animation: heroCircleScrollA linear both;
+      animation-duration: auto;
+      animation-timeline: scroll(root block);
+      animation-range: 0 650px;
+    }
+    .recipe-list-page .hero-image-accent-b {
+      animation: heroCircleScrollB linear both;
+      animation-duration: auto;
+      animation-timeline: scroll(root block);
+      animation-range: 0 650px;
+    }
+  }
+}
+@keyframes heroCircleScrollA {
+  from { transform: translateY(0); }
+  to { transform: translateY(55px); }
+}
+@keyframes heroCircleScrollB {
+  from { transform: translateY(0); }
+  to { transform: translateY(-65px); }
 }

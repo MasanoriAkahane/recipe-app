@@ -86,10 +86,10 @@
       </section>
       <section class="recipe-content-section" aria-labelledby="instructions-heading">
         <div class="content-section-heading"><h2 id="instructions-heading">Directions</h2></div>
-        <ol class="detail-directions" th:if="${recipe.instructions != null and !recipe.instructions.isEmpty()}">
-          <li th:each="step : ${#strings.arraySplit(recipe.instructions, '\n')}"><span th:text="${step}">鮭に塩を振る。</span></li>
+        <ol class="detail-directions" th:if="${instructionLines != null and !#lists.isEmpty(instructionLines)}">
+          <li th:each="step : ${instructionLines}"><span th:text="${step}">鮭に塩を振る。</span></li>
         </ol>
-        <p class="detail-empty-text" th:if="${recipe.instructions == null or recipe.instructions.isEmpty()}">作り方は登録されていません。</p>
+        <p class="detail-empty-text" th:if="${instructionLines == null or #lists.isEmpty(instructionLines)}">作り方は登録されていません。</p>
       </section>
     </div>
   </main>

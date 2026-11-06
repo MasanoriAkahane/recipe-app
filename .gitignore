@@ -5,7 +5,8 @@ HELP.md
 .mvn/wrapper/maven-wrapper.jar
 
 # H2
-/data/
+/data/*
+!/data/.gitkeep
 *.mv.db
 *.trace.db
 
@@ -32,3 +33,10 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+*.log

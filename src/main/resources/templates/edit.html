@@ -45,6 +45,7 @@
 
       <div class="form-input-panel">
         <h2 class="form-panel-title"><span class="panel-number">02</span> Recipe Details</h2>
+        <p class="form-error-summary" th:if="${#fields.hasErrors('*')}">入力内容に誤りがあります。料理名、調理時間、お気に入り度、人数を確認してください。</p>
         <div class="form-group">
           <label for="title">料理名 <span class="required">*</span></label>
           <input type="text" id="title" th:field="*{title}" placeholder="例：鮭の塩焼き" required maxlength="100">

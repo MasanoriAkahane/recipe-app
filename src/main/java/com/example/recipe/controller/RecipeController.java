@@ -5,8 +5,10 @@ import java.util.Base64;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+
+import jakarta.validation.Valid;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,10 +32,9 @@ public class RecipeController {
     }
 
     @GetMapping("/")
-    public String root(Model model) {
-            model.addAttribute("recipes", recipeRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")));
-            return "list";
-        }
+    public String root() {
+        return "redirect:/recipes";
+    }
 
     @GetMapping("/recipes")
     public String list(
@@ -57,14 +58,24 @@ public class RecipeController {
 
     @GetMapping("/recipes/new")
     public String registerForm(Model model) {
-        model.addAttribute("recipe", new Recipe());
+        Recipe recipe = new Recipe();
+        recipe.setCategory("主菜");
+        recipe.setCookingTime(15);
+        recipe.setFavoriteLevel(3);
+        model.addAttribute("recipe", recipe);
         return "register";
     }
 
     @PostMapping("/recipes")
-    public String createRecipe(@ModelAttribute Recipe recipe,
+    public String createRecipe(@Valid @ModelAttribute("recipe") Recipe recipe,
+                               BindingResult result,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)
             throws IOException {
+
+        // 入力が正しくなければ保存しないで、登録画面をもう一度表示する
+        if (result.hasErrors()) {
+            return "register";
+        }
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String base64Image = "data:" + imageFile.getContentType() + ";base64," +
@@ -77,10 +88,6 @@ public class RecipeController {
         recipe.setReading(
             KuromojiUtils.toKatakanaReading(recipe.getTitle())
         );
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
         recipe.setIngredientsReading(
             KuromojiUtils.toKatakanaReading(recipe.getIngredients())
         );
@@ -97,7 +104,7 @@ public class RecipeController {
             return "redirect:/recipes";
         }
 
-        // 材料を1行ずつリストに入れる（人数計算はJavaScript側で行う）
+        // 材料は1行ずつ表示する（人数計算はJavaScript側で行う）
         List<String> ingredientLines = new ArrayList<>();
         if (recipe.getIngredients() != null) {
             String[] lines = recipe.getIngredients().split("\n");
@@ -108,8 +115,20 @@ public class RecipeController {
             }
         }
 
+        // 作り方も1行ずつ表示する（改行が消える問題を防ぐ）
+        List<String> instructionLines = new ArrayList<>();
+        if (recipe.getInstructions() != null) {
+            String[] lines = recipe.getInstructions().split("\n");
+            for (String line : lines) {
+                if (!line.trim().isEmpty()) {
+                    instructionLines.add(line.trim());
+                }
+            }
+        }
+
         model.addAttribute("recipe", recipe);
         model.addAttribute("ingredientLines", ingredientLines);
+        model.addAttribute("instructionLines", instructionLines);
         return "detail";
     }
 
@@ -136,13 +155,21 @@ public class RecipeController {
     // レシピ更新処理
     @PostMapping("/recipes/{id}/update")
     public String updateRecipe(@PathVariable Long id,
-                               @ModelAttribute Recipe recipe,
+                               @Valid @ModelAttribute("recipe") Recipe recipe,
+                               BindingResult result,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)
             throws IOException {
 
         Recipe existingRecipe = recipeRepository.findById(id).orElse(null);
         if (existingRecipe == null) {
             return "redirect:/recipes";
+        }
+
+        // 入力エラーの場合は、保存せず元の画像を維持して編集画面に戻す
+        if (result.hasErrors()) {
+            recipe.setId(id);
+            recipe.setImage(existingRecipe.getImage());
+            return "edit";
         }
 
         existingRecipe.setTitle(recipe.getTitle());

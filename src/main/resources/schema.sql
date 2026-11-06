@@ -13,3 +13,6 @@ CREATE TABLE IF NOT EXISTS recipes(
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
+
+-- 古いDBに人数列がまだない場合だけ追加する
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS servings INTEGER;
