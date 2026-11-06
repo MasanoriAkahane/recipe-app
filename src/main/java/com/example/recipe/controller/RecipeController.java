@@ -125,12 +125,6 @@ public class RecipeController {
     // 編集画面表示処理
     @GetMapping("/recipes/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        return recipeRepository.findById(id)
-                .map(recipe -> {
-                    model.addAttribute("recipe", recipe);
-                    return "edit";
-                })
-                .orElse("redirect:/recipes");
         Recipe recipe = recipeRepository.findById(id).orElse(null);
         if (recipe == null) {
             return "redirect:/recipes";
