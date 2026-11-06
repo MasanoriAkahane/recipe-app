@@ -27,7 +27,7 @@
     </div>
 
     <form th:action="@{/recipes}" action="/recipes" method="post"
-          enctype="multipart/form-data" class="recipe-form-layout">
+          enctype="multipart/form-data" class="recipe-form-layout" th:object="${recipe}">
       <aside class="form-photo-panel">
         <h2 class="form-panel-title"><span class="panel-number">01</span> Photo</h2>
         <div class="photo-preview-box">
@@ -44,25 +44,26 @@
 
       <div class="form-input-panel">
         <h2 class="form-panel-title"><span class="panel-number">02</span> Recipe Details</h2>
+        <p class="form-error-summary" th:if="${#fields.hasErrors('*')}">入力内容に誤りがあります。料理名、調理時間、お気に入り度、人数を確認してください。</p>
         <div class="form-group">
           <label for="title">料理名 <span class="required">*</span></label>
-          <input type="text" id="title" name="title" placeholder="例：鮭の塩焼き" required maxlength="100">
+          <input type="text" id="title" th:field="*{title}" placeholder="例：鮭の塩焼き" required maxlength="100">
         </div>
         <div class="form-row-three">
           <div class="form-group">
             <label for="category">カテゴリ</label>
-            <select id="category" name="category">
+            <select id="category" th:field="*{category}">
               <option value="主菜">主菜</option><option value="副菜">副菜</option>
               <option value="汁物">汁物</option><option value="その他">その他</option>
             </select>
           </div>
           <div class="form-group">
             <label for="cookingTime">調理時間（分）</label>
-            <input type="number" id="cookingTime" name="cookingTime" min="1" value="15" required>
+            <input type="number" id="cookingTime" th:field="*{cookingTime}" min="1" value="15" required>
           </div>
           <div class="form-group">
             <label for="favoriteLevel">お気に入り度</label>
-            <select id="favoriteLevel" name="favoriteLevel">
+            <select id="favoriteLevel" th:field="*{favoriteLevel}">
               <option value="5">★★★★★</option>
               <option value="4">★★★★☆</option>
               <option value="3" selected>★★★☆☆</option>
@@ -75,7 +76,7 @@
           <div class="form-group">
             <label for="servings">基準人数 <span class="optional-note">任意・1〜10人前</span></label>
             <div class="servings-input-wrap">
-              <input type="number" id="servings" name="servings" min="1" max="10"
+              <input type="number" id="servings" th:field="*{servings}" min="1" max="10"
                      placeholder="未入力なら人数表示なし">
               <span class="servings-input-unit">人前</span>
             </div>
@@ -83,12 +84,12 @@
         </div>
         <div class="form-group">
           <label for="ingredients">材料 <span class="optional-note">1行に1つずつ入力</span></label>
-          <textarea id="ingredients" name="ingredients" rows="5"
+          <textarea id="ingredients" th:field="*{ingredients}" rows="5"
                     placeholder="鮭 2切れ&#10;塩 少々&#10;大根 適量"></textarea>
         </div>
         <div class="form-group">
           <label for="instructions">作り方 <span class="optional-note">1行に1手順ずつ入力</span></label>
-          <textarea id="instructions" name="instructions" rows="6"
+          <textarea id="instructions" th:field="*{instructions}" rows="6"
                     placeholder="鮭に塩を振る&#10;両面を焼く&#10;皿に盛り付ける"></textarea>
         </div>
         <div class="form-actions">
