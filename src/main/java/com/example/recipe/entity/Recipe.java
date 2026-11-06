@@ -1,11 +1,25 @@
 package com.example.recipe.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+@Valid
 @Entity
 @Table(name = "recipes")
 public class Recipe {
@@ -37,6 +51,11 @@ public class Recipe {
     @Max(5)
     @Column(name = "favorite_level", nullable = false)
     private Integer favoriteLevel;
+
+    @Min(1)
+    @Max(10)
+    @Column(name = "servings")
+    private Integer servings;
 
     @Lob
     @Column(columnDefinition = "TEXT")
@@ -92,6 +111,9 @@ public class Recipe {
 
     public Integer getFavoriteLevel() { return favoriteLevel; }
     public void setFavoriteLevel(Integer favoriteLevel) { this.favoriteLevel = favoriteLevel; }
+
+    public Integer getServings() { return servings; }
+    public void setServings(Integer servings) { this.servings = servings; }
 
     public String getIngredients() { return ingredients; }
     public void setIngredients(String ingredients) { this.ingredients = ingredients; }

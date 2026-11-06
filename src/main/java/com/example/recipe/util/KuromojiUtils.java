@@ -15,32 +15,33 @@ public class KuromojiUtils {
             return "";
         }
 
-        StringBuilder result = new StringBuilder();
+        String result = "";
 
         for (Token token : TOKENIZER.tokenize(text)) {
             String reading = token.getReading();
 
             if (reading == null || reading.equals("*")) {
-                result.append(hiraganaToKatakana(token.getSurface()));
+                result += hiraganaToKatakana(token.getSurface());
             } else {
-                result.append(reading);
+                result += reading;
             }
         }
 
-        return hiraganaToKatakana(result.toString());
+        return hiraganaToKatakana(result);
     }
 
     private static String hiraganaToKatakana(String text) {
-        StringBuilder result = new StringBuilder();
+        String result = "";
 
         for (char c : text.toCharArray()) {
             if (c >= 'ぁ' && c <= 'ゖ') {
-                result.append((char) (c + 0x60));
+                // ひらがなとカタカナの文字コードの差
+                result += (char) (c + 96);
             } else {
-                result.append(c);
+                result += c;
             }
         }
 
-        return result.toString();
+        return result;
     }
 }

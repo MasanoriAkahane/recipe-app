@@ -25,7 +25,7 @@
 
     <article class="detail-main">
       <div class="detail-image">
-        <img th:if="${recipe.image != null and !recipe.image.isEmpty()}" th:src="${recipe.image}" th:alt="${recipe.title}" alt="料理写真">
+        <img th:if="${recipe.image != null and !recipe.image.isEmpty()}" th:src="${recipe.image}" th:alt="${recipe.title}" alt="料理写真" loading="eager" fetchpriority="high" decoding="async">
         <div class="detail-image-empty" th:unless="${recipe.image != null and !recipe.image.isEmpty()}">
           <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 17h44v32H10zM15 17l7-7h20l7 7"/><circle cx="32" cy="32" r="10"/><path d="M17 45l10-9 7 5 8-11 8 15"/></svg>
           <span>写真なし</span>
@@ -48,25 +48,39 @@
         <div class="detail-facts">
           <div><span>カテゴリ</span><strong th:switch="${recipe.category}"><span th:case="'主菜'">主菜</span><span th:case="'副菜'">副菜</span><span th:case="'汁物'">汁物</span><span th:case="'その他'">その他</span><span th:case="*" th:text="${recipe.category}">カテゴリ</span></strong></div>
           <div><span>調理時間</span><strong><span th:text="${recipe.cookingTime}">25</span> 分</strong></div>
+          <div th:if="${recipe.servings != null}"><span>人数</span><strong th:text="${recipe.servings} + '人前'">2人前</strong></div>
         </div>
-        <div class="detail-actions">
-          <a class="button button-dark" href="/recipes/1/edit" th:href="@{/recipes/{id}/edit(id=${recipe.id})}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"/></svg>
-            編集する
-          </a>
-          <button class="button button-delete" type="button" popovertarget="deleteConfirm" popovertargetaction="show">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7M14 10v7"/></svg>
-            削除する
-          </button>
+        <div class="detail-toolbar">
+          <div class="detail-actions">
+            <a class="button button-dark" href="/recipes/1/edit" th:href="@{/recipes/{id}/edit(id=${recipe.id})}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"/></svg>
+              編集する
+            </a>
+            <button class="button button-delete" type="button" popovertarget="deleteConfirm" popovertargetaction="show">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7M14 10v7"/></svg>
+              削除する
+            </button>
+          </div>
+          <div id="servingsPanel" class="servings-preview-card" th:if="${recipe.servings != null}"
+               data-base-servings="2" th:attr="data-base-servings=${recipe.servings}">
+            <label class="servings-preview-label" for="targetServings">材料の人数を変更</label>
+            <div class="servings-select-row">
+              <select id="targetServings" aria-label="何人前の材料を表示するか">
+                <option th:each="n : ${#numbers.sequence(1,10)}" th:value="${n}"
+                        th:text="${n} + '人前'" th:selected="${n == recipe.servings}">1人前</option>
+              </select>
+              <button type="button" id="calculateServings" class="servings-calc-button">材料を計算</button>
+            </div>
+          </div>
         </div>
       </div>
     </article>
 
     <div class="detail-body">
       <section class="recipe-content-section" aria-labelledby="ingredients-heading">
-        <div class="content-section-heading"><h2 id="ingredients-heading">Ingredients</h2></div>
-        <ul class="detail-ingredients" th:if="${recipe.ingredients != null and !recipe.ingredients.isEmpty()}">
-          <li th:each="ingredient : ${#strings.arraySplit(recipe.ingredients, '\n')}" th:text="${ingredient}">生鮭 2切れ</li>
+        <div class="content-section-heading"><h2 id="ingredients-heading">Ingredients</h2><span id="displayedServings" class="ingredients-servings-label" th:if="${recipe.servings != null}" th:text="${recipe.servings} + '人前'">2人前</span></div>
+        <ul class="detail-ingredients" th:if="${ingredientLines != null and !#lists.isEmpty(ingredientLines)}">
+          <li th:each="ingredient : ${ingredientLines}" th:text="${ingredient}">生鮭 2切れ</li>
         </ul>
         <p class="detail-empty-text" th:if="${recipe.ingredients == null or recipe.ingredients.isEmpty()}">材料は登録されていません。</p>
       </section>
@@ -94,5 +108,6 @@
       <button type="button" class="button button-cancel-delete" popovertarget="deleteConfirm" popovertargetaction="hide" autofocus>キャンセル</button>
     </div>
   </div>
+  <script src="/js/servings.js" th:src="@{/js/servings.js}" defer></script>
 </body>
 </html>

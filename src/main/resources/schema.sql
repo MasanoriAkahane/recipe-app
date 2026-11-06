@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS recipes(
     category VARCHAR(50) NOT NULL,
     cooking_time INTEGER NOT NULL,
     favorite_level INTEGER NOT NULL,
+    servings INTEGER,
     ingredients CLOB,
     ingredients_reading CLOB,
     instructions CLOB,

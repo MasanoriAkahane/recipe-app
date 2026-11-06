@@ -2,6 +2,7 @@ package com.example.recipe.controller;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -76,6 +77,10 @@ public class RecipeController {
         recipe.setReading(
             KuromojiUtils.toKatakanaReading(recipe.getTitle())
         );
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         recipe.setIngredientsReading(
             KuromojiUtils.toKatakanaReading(recipe.getIngredients())
         );
@@ -91,7 +96,20 @@ public class RecipeController {
         if (recipe == null) {
             return "redirect:/recipes";
         }
+
+        // 材料を1行ずつリストに入れる（人数計算はJavaScript側で行う）
+        List<String> ingredientLines = new ArrayList<>();
+        if (recipe.getIngredients() != null) {
+            String[] lines = recipe.getIngredients().split("\n");
+            for (String line : lines) {
+                if (!line.trim().isEmpty()) {
+                    ingredientLines.add(line.trim());
+                }
+            }
+        }
+
         model.addAttribute("recipe", recipe);
+        model.addAttribute("ingredientLines", ingredientLines);
         return "detail";
     }
 
@@ -113,6 +131,12 @@ public class RecipeController {
                     return "edit";
                 })
                 .orElse("redirect:/recipes");
+        Recipe recipe = recipeRepository.findById(id).orElse(null);
+        if (recipe == null) {
+            return "redirect:/recipes";
+        }
+        model.addAttribute("recipe", recipe);
+        return "edit";
     }
 
     // レシピ更新処理
@@ -132,6 +156,7 @@ public class RecipeController {
         existingRecipe.setCookingTime(recipe.getCookingTime());
         existingRecipe.setFavoriteLevel(recipe.getFavoriteLevel());
         existingRecipe.setIngredients(recipe.getIngredients());
+        existingRecipe.setServings(recipe.getServings());
         existingRecipe.setInstructions(recipe.getInstructions());
 
         existingRecipe.setReading(KuromojiUtils.toKatakanaReading(recipe.getTitle()));

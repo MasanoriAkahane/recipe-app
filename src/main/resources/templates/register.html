@@ -71,6 +71,16 @@
             </select>
           </div>
         </div>
+        <div class="form-row-servings">
+          <div class="form-group">
+            <label for="servings">基準人数 <span class="optional-note">任意・1〜10人前</span></label>
+            <div class="servings-input-wrap">
+              <input type="number" id="servings" name="servings" min="1" max="10"
+                     placeholder="未入力なら人数表示なし">
+              <span class="servings-input-unit">人前</span>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label for="ingredients">材料 <span class="optional-note">1行に1つずつ入力</span></label>
           <textarea id="ingredients" name="ingredients" rows="5"

@@ -3,7 +3,12 @@
 
 const panel = document.getElementById("servingsPanel");
 
+<<<<<<< Updated upstream
 if (panel !== null) {   // 人数が未登録なら、計算用の部品はHTMLにないので何もしない。
+=======
+// 人数が未登録なら、計算用の部品はHTMLにないので何もしない。
+if (panel !== null) {
+>>>>>>> Stashed changes
     const baseServings = Number(panel.dataset.baseServings);
     const select = document.getElementById("targetServings");
     const button = document.getElementById("calculateServings");
