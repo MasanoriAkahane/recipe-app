@@ -1,7 +1,9 @@
 package com.example.recipe;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +26,7 @@ public class RecipeApplication {
             } else {
                 System.out.println("ブラウザで " + url + " を開いてください。");
             }
-        } catch (Exception ignored) {
+        } catch (IOException | URISyntaxException ignored) {
             System.out.println("ブラウザ自動起動をスキップしました。手動で " + url + " を開いてください。");
         }
     }

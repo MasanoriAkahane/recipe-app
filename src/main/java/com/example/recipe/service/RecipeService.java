@@ -21,6 +21,7 @@ public class RecipeService {
     // 検索語句、カテゴリ、ソート方法を基に、DBへのメソッドを作成する。
     // Conrollerから呼び出される。
     //====================================================================================
+    @SuppressWarnings("ConvertToStringSwitch")
     public List<Recipe> searchDb(String keyword, String category,int sort){
         List<Recipe> list;
 
@@ -50,6 +51,7 @@ public class RecipeService {
     //====================================================================================
     private static List<Recipe> concatRequestAndSort(int sort, List<Recipe> list1, List<Recipe> list2) {
 
+    @SuppressWarnings("null")
     Comparator<Recipe> comparator = switch (sort) {
         case 0 -> Comparator.comparing(Recipe::getUpdatedAt).reversed();// 更新日時が新しい順（降順）
         case 1 -> Comparator.comparing(Recipe::getUpdatedAt);// 更新日時が新しい順（昇順）
