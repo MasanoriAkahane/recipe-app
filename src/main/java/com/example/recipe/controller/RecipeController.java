@@ -20,15 +20,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
 import com.example.recipe.service.RecipeService;
-import com.example.recipe.util.KuromojiUtils;
+import com.example.recipe.util.KuromojiUtils; // 森口さん担当の検索処理との互換性維持
+import com.example.recipe.util.SudachiReadingUtils;
 
 @Controller
 public class RecipeController {
 
     private final RecipeRepository recipeRepository;
+    private final SudachiReadingUtils sudachiReadingUtils;
 
-    public RecipeController(RecipeRepository recipeRepository) {
+    public RecipeController(RecipeRepository recipeRepository, SudachiReadingUtils sudachiReadingUtils) {
         this.recipeRepository = recipeRepository;
+        this.sudachiReadingUtils = sudachiReadingUtils;
     }
 
     @GetMapping("/")
@@ -86,10 +89,10 @@ public class RecipeController {
         }
 
         recipe.setReading(
-            KuromojiUtils.toKatakanaReading(recipe.getTitle())
+            sudachiReadingUtils.toKatakanaReading(recipe.getTitle())
         );
         recipe.setIngredientsReading(
-            KuromojiUtils.toKatakanaReading(recipe.getIngredients())
+            sudachiReadingUtils.toKatakanaReading(recipe.getIngredients())
         );
 
         recipeRepository.save(recipe);
@@ -180,8 +183,8 @@ public class RecipeController {
         existingRecipe.setServings(recipe.getServings());
         existingRecipe.setInstructions(recipe.getInstructions());
 
-        existingRecipe.setReading(KuromojiUtils.toKatakanaReading(recipe.getTitle()));
-        existingRecipe.setIngredientsReading(KuromojiUtils.toKatakanaReading(recipe.getIngredients()));
+        existingRecipe.setReading(sudachiReadingUtils.toKatakanaReading(recipe.getTitle()));
+        existingRecipe.setIngredientsReading(sudachiReadingUtils.toKatakanaReading(recipe.getIngredients()));
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String base64Image = "data:" + imageFile.getContentType() + ";base64," +

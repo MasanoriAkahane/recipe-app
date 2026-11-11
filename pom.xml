@@ -63,6 +63,13 @@
       <version>0.9.0</version>
     </dependency>
 
+    <!-- Sudachi Core: 登録・編集時の読み生成に使用 -->
+    <dependency>
+      <groupId>com.worksap.nlp</groupId>
+      <artifactId>sudachi</artifactId>
+      <version>0.8.2</version>
+    </dependency>
+
     <!-- 開発支援ツール (自動再読み込み) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

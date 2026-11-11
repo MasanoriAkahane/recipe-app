@@ -2,7 +2,7 @@ package com.example.recipe.config;
 
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
-import com.example.recipe.util.KuromojiUtils;
+import com.example.recipe.util.SudachiReadingUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 public class DataLoader implements CommandLineRunner {
 
     private final RecipeRepository recipeRepository;
+    private final SudachiReadingUtils sudachiReadingUtils;
 
-    public DataLoader(RecipeRepository recipeRepository) {
+    public DataLoader(RecipeRepository recipeRepository, SudachiReadingUtils sudachiReadingUtils) {
         this.recipeRepository = recipeRepository;
+        this.sudachiReadingUtils = sudachiReadingUtils;
     }
 
     @Override
@@ -49,12 +51,12 @@ public class DataLoader implements CommandLineRunner {
             boolean needsUpdate = false;
 
             if (recipe.getReading() == null) {
-                recipe.setReading(KuromojiUtils.toKatakanaReading(recipe.getTitle()));
+                recipe.setReading(sudachiReadingUtils.toKatakanaReading(recipe.getTitle()));
                 needsUpdate = true;
             }
 
             if (recipe.getIngredientsReading() == null) {
-                recipe.setIngredientsReading(KuromojiUtils.toKatakanaReading(recipe.getIngredients()));
+                recipe.setIngredientsReading(sudachiReadingUtils.toKatakanaReading(recipe.getIngredients()));
                 needsUpdate = true;
             }
 
@@ -65,8 +67,8 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void saveRecipe(Recipe recipe) {
-        recipe.setReading(KuromojiUtils.toKatakanaReading(recipe.getTitle()));
-        recipe.setIngredientsReading(KuromojiUtils.toKatakanaReading(recipe.getIngredients()));
+        recipe.setReading(sudachiReadingUtils.toKatakanaReading(recipe.getTitle()));
+        recipe.setIngredientsReading(sudachiReadingUtils.toKatakanaReading(recipe.getIngredients()));
         recipeRepository.save(recipe);
     }
 }
