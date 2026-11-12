@@ -593,6 +593,7 @@ body.recipe-ui {
   margin: 0;
   font-size: 12px;
   line-height: 1.9;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
@@ -1061,4 +1062,28 @@ body.recipe-ui {
 @keyframes heroCircleScrollB {
   from { transform: translateY(0); }
   to { transform: translateY(-65px); }
+}
+
+/*buttonからselectへ変更*/
+.recipe-list-page .sort-select {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 32px 8px 12px;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+
+.recipe-list-page .sort-select:hover {
+  border-color: var(--accent);
+}
+
+
+.recipe-list-page .sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: none;
 }
