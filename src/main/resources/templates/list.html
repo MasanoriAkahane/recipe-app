@@ -105,23 +105,21 @@
 
         <div class="sort-position">
           <form class="sort-form" action="/recipes" th:action="@{/recipes}" method="get">
+
             <input type="hidden" name="searchText" value="" th:value="${param.searchText != null ? param.searchText[0] : ''}">
             <input type="hidden" name="category" value="すべて" th:value="${param.category != null ? param.category[0] : 'すべて'}">
-            <details class="sort-dropdown">
-              <summary class="sort-trigger">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M3 10h14M3 15h10M3 20h6"/></svg>
-                並び替え
-                <span class="sort-caret" aria-hidden="true">⌄</span>
-              </summary>
-              <div class="sort-options">
-                <button type="submit" name="sort" value="0" th:classappend="${param.sort == null or param.sort[0] == '0'} ? 'is-selected' : ''">更新日時：新しい順</button>
-                <button type="submit" name="sort" value="1" th:classappend="${param.sort != null and param.sort[0] == '1'} ? 'is-selected' : ''">更新日時：古い順</button>
-                <button type="submit" name="sort" value="2" th:classappend="${param.sort != null and param.sort[0] == '2'} ? 'is-selected' : ''">評価：高い順</button>
-                <button type="submit" name="sort" value="3" th:classappend="${param.sort != null and param.sort[0] == '3'} ? 'is-selected' : ''">評価：低い順</button>
-                <button type="submit" name="sort" value="4" th:classappend="${param.sort != null and param.sort[0] == '4'} ? 'is-selected' : ''">調理時間：長い順</button>
-                <button type="submit" name="sort" value="5" th:classappend="${param.sort != null and param.sort[0] == '5'} ? 'is-selected' : ''">調理時間：短い順</button>
-              </div>
-            </details>
+
+            <div class="sort-dropdown">
+
+              <select name="sort" id="sortSelect" class="sort-select">
+                <option value="0" th:selected="${param.sort == null or param.sort[0] == '0'}">更新日時：新しい順</option>
+                <option value="1" th:selected="${param.sort != null and param.sort[0] == '1'}">更新日時：古い順</option>
+                <option value="2" th:selected="${param.sort != null and param.sort[0] == '2'}">評価：高い順</option>
+                <option value="3" th:selected="${param.sort != null and param.sort[0] == '3'}">評価：低い順</option>
+                <option value="4" th:selected="${param.sort != null and param.sort[0] == '4'}">調理時間：長い順</option>
+                <option value="5" th:selected="${param.sort != null and param.sort[0] == '5'}">調理時間：短い順</option>
+              </select>
+            </div>
           </form>
         </div>
       </div>
@@ -150,6 +148,8 @@
               <span class="recipe-servings" th:if="${recipe.servings != null}"
                     th:text="${recipe.servings} + '人前'">2人前</span>
               <span class="recipe-cook-time" th:if="${recipe.cookingTime != null}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span th:text="${recipe.cookingTime}">25</span>分</span>
+              <!-- 追加: 更新日 -->
+              <span class="recipe-updated-at" th:if="${recipe.updatedAt != null}" th:text="'更新日: ' + ${#temporals.format(recipe.updatedAt, 'yyyy/MM/dd')}">更新日: 2026/11/12</span>
             </div>
           </div>
         </article>
