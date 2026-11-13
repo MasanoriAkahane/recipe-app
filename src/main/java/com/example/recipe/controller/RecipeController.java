@@ -1,15 +1,13 @@
 package com.example.recipe.controller;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-
-import jakarta.validation.Valid;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
 import com.example.recipe.service.RecipeService;
-import com.example.recipe.util.KuromojiUtils; // 森口さん担当の検索処理との互換性維持
 import com.example.recipe.util.SudachiReadingUtils;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class RecipeController {
@@ -50,7 +49,7 @@ public class RecipeController {
         //==========================================
         // kuromojiで日本語→かなに変換。
         //==========================================
-        String keyword = KuromojiUtils.toKatakanaReading(searchText);
+        String keyword = sudachiReadingUtils.toKatakanaReading(searchText);
         if (category == null){category = "すべて";} // Nullをすべてに変換
 
         RecipeService service = new RecipeService(recipeRepository);
