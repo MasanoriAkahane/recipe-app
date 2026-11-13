@@ -40,3 +40,6 @@ Thumbs.db
 !.env.example
 application-local.properties
 *.log
+
+# Sudachi辞書本体はGitHubの単一ファイル制限を超えるため追跡しない
+/dictionary/*.dic
