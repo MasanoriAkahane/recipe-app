@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&amp;family=Epunda+Sans:ital,wght@0,300..900;1,300..900&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+  <script th:src="@{/js/listsort.js}" defer></script>
 </head>
 <body class="recipe-ui recipe-list-page">
   <header class="site-header">
@@ -107,7 +108,6 @@
         </form>
 
         <div class="sort-position">
-          <!-- 並び替えはJavaScriptが処理する。フォーム送信は行わない。 -->
           <div class="sort-form" aria-label="レシピの並び替え">
             <details class="sort-dropdown" id="recipe-sort-dropdown">
               <summary class="sort-trigger">
