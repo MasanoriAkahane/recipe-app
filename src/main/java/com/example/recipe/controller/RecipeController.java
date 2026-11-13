@@ -42,20 +42,15 @@ public class RecipeController {
     public String list(
         @RequestParam(name = "searchText", required = false) String searchText, // 値が渡されない場合でも動作する。nullを受け取る。
         @RequestParam(name = "category", required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
-        @RequestParam(defaultValue = "0") int sort, // 値が渡されない場合、初期値0を受け取る。 int はNullを受け取れない型の為。
         Model model) {
 
         List<Recipe> list;
-        //==========================================
-        // kuromojiで日本語→かなに変換。
-        //==========================================
-        String keyword = sudachiReadingUtils.toKatakanaReading(searchText);
-        if (category == null){category = "すべて";} // Nullをすべてに変換
 
-        RecipeService service = new RecipeService(recipeRepository);
-        list = service.searchDb(keyword, category, sort);
+        RecipeService service = new RecipeService(recipeRepository, sudachiReadingUtils);
+        list = service.searchDb(searchText, category);
         model.addAttribute("recipes", list);
         return "list";
+        // .\mvnw.cmd clean spring-boot:run -U
     }
 
     @GetMapping("/recipes/new")
