@@ -6,11 +6,11 @@
 // 読み込み完了時に動作する。
 document.addEventListener("DOMContentLoaded", () => {
 
-    const sortSelect = document.getElementById("sortSelect");
+    const sortOptions = document.getElementById("recipe-sort-options");
     const recipeGrid = document.querySelector(".recipe-grid");
 
     // 並び替えが未選択、もしくは、レシピグリッドが何もない場合は並び替えを実行しない。
-    if (!sortSelect || !recipeGrid) return;
+    if (!sortOptions || !recipeGrid) return;
 
     // =================================================================
     // 機能：並び替えのロジック
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =================================================================
     // 機能：並び替えのメソッド部分です。
     // =================================================================
-    const updateRecipeList = () => {
+    const updateRecipeList = (sortType) => {
 
         // 現在表示されているレシピカードを取得
         const cards = Array.from(
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         // 並び替えを実行
-        const sortedCards = sortRecipes(cards, sortSelect.value);
+        const sortedCards = sortRecipes(cards, sortType);
 
         // 並び替えた順番でHTMLに追加
         sortedCards.forEach(card => {
@@ -97,10 +97,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // 動作条件：sortselectがなにか変更されたとき。
     // updateRecipeListメソッドが動作する。
     // =================================================================
-    sortSelect.addEventListener("change", updateRecipeList);
+    // sortSelect.addEventListener("click", updateRecipeList);
 
     // html読み込み直後ならこちらが動作。
-    updateRecipeList();
+    // updateRecipeList();
+
+    sortOptions.addEventListener("click", (event) => {
+
+        // クリックされた要素がボタンか確認
+        const button = event.target.closest("button[data-sort]");
+
+        if (!button) return;
+
+        // 並び替えの種類を取得
+        const sortType = button.dataset.sort;
+
+        // 並び替えを実行
+        updateRecipeList(sortType);
+
+        // 選択状態を更新
+        sortOptions.querySelectorAll("button[data-sort]").forEach(btn => {
+
+            const isSelected = btn === button;
+
+            btn.classList.toggle("is-selected", isSelected);
+
+            btn.setAttribute("aria-pressed", String(isSelected));
+        });
+
+        // 並び替え後にドロップダウンを閉じる
+        document.getElementById("recipe-sort-dropdown").open = false;
+
+    });
 
 });
 
