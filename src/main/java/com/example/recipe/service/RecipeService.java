@@ -1,73 +1,87 @@
 package com.example.recipe.service;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
+
+import org.springframework.stereotype.Service;
 
 import com.example.recipe.entity.Recipe;
 import com.example.recipe.repository.RecipeRepository;
+import com.example.recipe.util.SearchNormalizer;
+import com.example.recipe.util.SudachiReadingUtils;
 
+@Service // 依存関係　コンストラクタインジェクションから動作する想定。
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final SudachiReadingUtils sudachiReadingUtils; //別の人が追加予定。
 
-        public RecipeService(RecipeRepository recipeRepository) {
+        public RecipeService(RecipeRepository recipeRepository, SudachiReadingUtils sudachiReadingUtils) {
         this.recipeRepository = recipeRepository;
+        this.sudachiReadingUtils = sudachiReadingUtils;
     }
 
 
     //====================================================================================
     // 用途：
-    // 検索語句、カテゴリ、ソート方法を基に、DBへのメソッドを作成する。
-    // Conrollerから呼び出される。
+    // 検索語句、カテゴリを基に、DBからリストを取り出す。
+    // Controllerから呼び出される。
     //====================================================================================
-    @SuppressWarnings("ConvertToStringSwitch")
-    public List<Recipe> searchDb(String keyword, String category,int sort){
-        List<Recipe> list;
+    @SuppressWarnings("ConvertToStringSwitch") // ifelseのswich変換提案を無視する。
+    public List<Recipe> searchDb(String keyword, String category){
 
-        if ("すべて".equals(category)){// "すべて"が選択された場合の手続き ※nullは呼び出し前に"すべて"に変換されてからくる。
-            List<Recipe> list1 = recipeRepository.findByReadingContaining(keyword);
-            List<Recipe> list2 = recipeRepository.findByIngredientsReadingContaining(keyword);
-            list = concatRequestAndSort(sort, list1, list2);
-        }
-        else if ("その他".equals(category)){// カテゴリに"すべて""その他"以外が入力された場合の手続き
-            List<Recipe> list1 = recipeRepository.findByCategoryNotInAndReadingContaining(List.of("主菜", "副菜", "汁物"),keyword);
-            List<Recipe> list2 = recipeRepository.findByCategoryNotInAndIngredientsReadingContaining(List.of("主菜", "副菜", "汁物"),keyword);
-            list = concatRequestAndSort(sort, list1, list2);
-        }
-        else{// 主菜副菜汁物が来た時に動作する。
-            List<Recipe> list1 = recipeRepository.findByReadingContainingAndCategory(keyword,category);
-            List<Recipe> list2 = recipeRepository.findByIngredientsReadingContainingAndCategory(keyword,category);
-            list = concatRequestAndSort(sort, list1, list2);
-        }
-        return list;
+        //======================================
+        // 機能：検索文字を整理
+        // nullなら""それ以外はトリムする。
+        // queryが空白なら""を取得。それ以外はすだちクラスで読み仮名を取得。
+        //query は検索文字列。
+        //queryReading は、読み仮名。
+        //======================================
+    String query = keyword == null ? "" : keyword.trim();
+    String queryReading = query.isEmpty() ? "" : sudachiReadingUtils.toKatakanaReading(query);
+
+        //======================================
+        // 機能：検索文字を使用したリスト作成。
+        // 1:全件取得
+        // 2:カテゴリ一致
+        // 3:入力文字で検索
+        // 4:カナ文字で検索
+        //======================================
+    List<Recipe> matches = recipeRepository.findAll().stream()
+        .filter( // カテゴリに一致するレシピを取得
+            recipe -> matchesCategory(recipe, category)//レシピの数だけ繰り返す。
+        )
+        .filter(
+            recipe -> query.isEmpty() // 検索欄が空欄なら何もしない。　全件取得のまま。
+                || SearchNormalizer.matches(
+                    recipe.getTitle(),
+                    recipe.getReading(),
+                    query, queryReading) // これ完全一致じゃない？
+                || SearchNormalizer.matches(
+                    recipe.getIngredients(),
+                    recipe.getIngredientsReading(),
+                    query, queryReading)
+                )
+        // .sorted(Comparator.comparing(Recipe::getUpdatedAt).reversed()) // ソート前のリストは　更新日時が新しい順（降順）
+        .toList();
+
+    return matches;
     }
 
-    //====================================================================================
-    // 用途：
-    // 2種類のlistを接続する
-    // 接続後のリストをsort値を参照して並び替える
-    // 更新日時が新しい順（デフォルト: updatedAt desc）
-    //====================================================================================
-    private static List<Recipe> concatRequestAndSort(int sort, List<Recipe> list1, List<Recipe> list2) {
-
-    @SuppressWarnings("null")
-    Comparator<Recipe> comparator = switch (sort) {
-        case 0 -> Comparator.comparing(Recipe::getUpdatedAt).reversed();// 更新日時が新しい順（降順）
-        case 1 -> Comparator.comparing(Recipe::getUpdatedAt);// 更新日時が新しい順（昇順）
-        case 2 -> Comparator.comparing(Recipe::getFavoriteLevel).reversed();// お気に入り度が高い順（降順）
-        case 3 -> Comparator.comparing(Recipe::getFavoriteLevel);// お気に入り度が高い順（昇順）
-        case 4 -> Comparator.comparing(Recipe::getCookingTime).reversed();// 調理時間が短い順（降順）
-        case 5 -> Comparator.comparing(Recipe::getCookingTime);// 調理時間が短い順（昇順）
-        case 6 -> Comparator.comparing(Recipe::getTitle).reversed();// 料理名順（降順）
-        case 7 -> Comparator.comparing(Recipe::getTitle);// 料理名順（昇順）
-        // ソートが未初期化の場合の処理
-        default -> Comparator.comparing(Recipe::getUpdatedAt).reversed();// ここは所定の数字以外が来ることは想定していない。
-    };
-    return Stream.concat(list1.stream(), list2.stream())
-            .distinct()
-            .sorted(comparator)
-            .toList();
-}
+        //======================================
+        // 機能：カテゴリで絞り込みを行う。
+        // 1行分の処理。
+        // true falseを返していく。
+        //======================================
+    private boolean matchesCategory(Recipe recipe, String category) {
+        // カテゴリにnullは来ない。controllerですべてに変換される。
+        // 安全のためこちらでも記述。後で訂正する可能性有り。
+        if (category == null || "すべて".equals(category))
+            return true;
+        if ("その他".equals(category)) {
+            // "主菜", "副菜", "汁物"とカテゴリが一致しないならばtrueを返す。
+            return !List.of("主菜", "副菜", "汁物").contains(recipe.getCategory());
+        }
+        return category.equals(recipe.getCategory());
+    }
 
 }
