@@ -125,7 +125,7 @@
       <!-- JSは#recipe-grid内の.recipe-cardを並べ替える。数値や日時はdata-*属性から取得する。 -->
       <div id="recipe-grid" class="recipe-grid" th:if="${recipes != null and !#lists.isEmpty(recipes)}">
         <article class="recipe-card" th:each="recipe : ${recipes}"
-                 th:attr="data-updated-at=${recipe.updatedAt},data-favorite-level=${recipe.favoriteLevel},data-cooking-time=${recipe.cookingTime}">
+                 th:attr="data-recipe-id=${recipe.id},data-updated-at=${recipe.updatedAt},data-favorite-level=${recipe.favoriteLevel},data-cooking-time=${recipe.cookingTime}">
           <div class="recipe-thumb">
             <a class="recipe-photo-link" href="/recipes/1" th:href="@{/recipes/{id}(id=${recipe.id})}" aria-label="レシピの詳細を見る" th:aria-label="${recipe.title} + 'の詳細を見る'">
               <img th:if="${recipe.image != null and !recipe.image.isEmpty()}" th:src="${recipe.image}" th:alt="${recipe.title} + 'の写真'" alt="料理写真" loading="lazy">
@@ -159,7 +159,6 @@
       </div>
     </section>
   </main>
-  <!-- 森口さんの元JSをそのまま読み込む -->
-  <script src="/js/recipesort.js" th:src="@{/js/recipe-sort.js}" defer></script>
+    <script th:src="@{/js/listsort.js}"></script>
 </body>
 </html>
