@@ -14,7 +14,9 @@
     <div class="site-header-inner">
       <a class="site-brand" href="/recipes" th:href="@{/recipes}" aria-label="きょうのレシピ：レシピ一覧へ">
         <picture class="site-brand-logo">
+          <!-- OS側でアニメーションを減らす設定なら静止画像にする -->
           <source media="(prefers-reduced-motion: reduce)" srcset="/images/logo/kyouno-recipe-still.png" th:srcset="@{/images/logo/kyouno-recipe-still.png}" type="image/png">
+          <!-- Edge / Chromeでは画質の良い透過アニメーションを表示 -->
           <source srcset="/images/logo/kyouno-recipe-animated.webp" th:srcset="@{/images/logo/kyouno-recipe-animated.webp}" type="image/webp">
           <img class="site-brand-animation" src="/images/logo/kyouno-recipe-animated.gif" th:src="@{/images/logo/kyouno-recipe-animated.gif}" alt="きょうのレシピ" width="562" height="169">
         </picture>
@@ -105,19 +107,23 @@
         </form>
 
         <div class="sort-position">
-          <div class="sort-form">
-            <div class="sort-select-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M3 10h14M3 15h10M3 20h6"/></svg>
-              <label for="sortSelect" class="sr-only">並び替え</label>
-              <select id="sortSelect" aria-label="レシピの並び替え">
-                <option value="0" selected>更新日時：新しい順</option>
-                <option value="1">更新日時：古い順</option>
-                <option value="2">評価：高い順</option>
-                <option value="3">評価：低い順</option>
-                <option value="4">調理時間：長い順</option>
-                <option value="5">調理時間：短い順</option>
-              </select>
-            </div>
+          <!-- 並び替えはJavaScriptが処理する。フォーム送信は行わない。 -->
+          <div class="sort-form" aria-label="レシピの並び替え">
+            <details class="sort-dropdown" id="recipe-sort-dropdown">
+              <summary class="sort-trigger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M3 10h14M3 15h10M3 20h6"/></svg>
+                並び替え
+                <span class="sort-caret" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="sort-options" id="recipe-sort-options" role="group" aria-label="並び替えの順序">
+                <button type="button" data-sort="0" class="is-selected" aria-pressed="true">更新日時：新しい順</button>
+                <button type="button" data-sort="1" aria-pressed="false">更新日時：古い順</button>
+                <button type="button" data-sort="2" aria-pressed="false">評価：高い順</button>
+                <button type="button" data-sort="3" aria-pressed="false">評価：低い順</button>
+                <button type="button" data-sort="4" aria-pressed="false">調理時間：長い順</button>
+                <button type="button" data-sort="5" aria-pressed="false">調理時間：短い順</button>
+              </div>
+            </details>
           </div>
         </div>
       </div>
@@ -125,7 +131,7 @@
       <!-- JSは#recipe-grid内の.recipe-cardを並べ替える。数値や日時はdata-*属性から取得する。 -->
       <div id="recipe-grid" class="recipe-grid" th:if="${recipes != null and !#lists.isEmpty(recipes)}">
         <article class="recipe-card" th:each="recipe : ${recipes}"
-                 th:attr="data-recipe-id=${recipe.id},data-updated-at=${recipe.updatedAt},data-favorite-level=${recipe.favoriteLevel},data-cooking-time=${recipe.cookingTime}">
+                 th:attr="data-updated-at=${recipe.updatedAt},data-favorite-level=${recipe.favoriteLevel},data-cooking-time=${recipe.cookingTime}">
           <div class="recipe-thumb">
             <a class="recipe-photo-link" href="/recipes/1" th:href="@{/recipes/{id}(id=${recipe.id})}" aria-label="レシピの詳細を見る" th:aria-label="${recipe.title} + 'の詳細を見る'">
               <img th:if="${recipe.image != null and !recipe.image.isEmpty()}" th:src="${recipe.image}" th:alt="${recipe.title} + 'の写真'" alt="料理写真" loading="lazy">
@@ -159,6 +165,5 @@
       </div>
     </section>
   </main>
-    <script th:src="@{/js/listsort.js}"></script>
 </body>
 </html>
