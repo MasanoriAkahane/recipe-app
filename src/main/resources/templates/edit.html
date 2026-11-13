@@ -12,9 +12,14 @@
 <body class="recipe-ui recipe-form-page">
   <header class="site-header">
     <div class="site-header-inner">
-      <a class="site-brand" href="/recipes" th:href="@{/recipes}" aria-label="レシピ一覧へ">
-        <span class="site-brand-mark" aria-hidden="true">R<span>.</span></span>
-        <span class="site-brand-text">Recipe Manager</span>
+      <a class="site-brand" href="/recipes" th:href="@{/recipes}" aria-label="きょうのレシピ：レシピ一覧へ">
+        <picture class="site-brand-logo">
+          <!-- OS側でアニメーションを減らす設定なら静止画像にする -->
+          <source media="(prefers-reduced-motion: reduce)" srcset="/images/logo/kyouno-recipe-still.png" th:srcset="@{/images/logo/kyouno-recipe-still.png}" type="image/png">
+          <!-- Edge / Chromeでは画質の良い透過アニメーションを表示 -->
+          <source srcset="/images/logo/kyouno-recipe-animated.webp" th:srcset="@{/images/logo/kyouno-recipe-animated.webp}" type="image/webp">
+          <img class="site-brand-animation" src="/images/logo/kyouno-recipe-animated.gif" th:src="@{/images/logo/kyouno-recipe-animated.gif}" alt="きょうのレシピ" width="562" height="169">
+        </picture>
       </a>
       <a class="header-text-link" href="/recipes" th:href="@{/recipes}">← 一覧に戻る</a>
     </div>
