@@ -34,7 +34,7 @@ public class DataLoader implements CommandLineRunner {
                 ""
             ));
             saveRecipe(new Recipe(
-                "彩り野菜の和風カレー", "主菜", 35, 4,
+                "彩り野菜の和風カレー", "主菜", 35, 2,
                 "鶏もも肉 150g\nかぼちゃ 100g\nなす 1本\n和風だし 400ml\nカレールー 2片",
                 "具材を一口大に切る\n鍋で肉と野菜を炒め、出汁で煮込む\nルーを溶いてとろみがつくまで煮込む",
                 ""
