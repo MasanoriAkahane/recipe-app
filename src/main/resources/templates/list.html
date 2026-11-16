@@ -128,7 +128,6 @@
         </div>
       </div>
 
-      <!-- JSは#recipe-grid内の.recipe-cardを並べ替える。数値や日時はdata-*属性から取得する。 -->
       <div id="recipe-grid" class="recipe-grid" th:if="${recipes != null and !#lists.isEmpty(recipes)}">
         <article class="recipe-card" th:each="recipe : ${recipes}"
                  th:attr="data-updated-at=${recipe.updatedAt},data-favorite-level=${recipe.favoriteLevel},data-cooking-time=${recipe.cookingTime}">
@@ -160,7 +159,7 @@
       </div>
 
       <div class="empty-recipes" th:if="${recipes == null or #lists.isEmpty(recipes)}">
-        <p>該当するレシピがありません。</p>
+        <p>該当するレシピがありません</p>
         <a href="/recipes" th:href="@{/recipes}">すべてのレシピを見る</a>
       </div>
     </section>

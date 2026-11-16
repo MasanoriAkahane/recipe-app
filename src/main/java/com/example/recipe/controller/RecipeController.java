@@ -40,8 +40,8 @@ public class RecipeController {
 
     @GetMapping("/recipes")
     public String list(
-        @RequestParam(name = "searchText", required = false) String searchText, // 値が渡されない場合でも動作する。nullを受け取る。
-        @RequestParam(name = "category", required = false) String category, // 値が渡されない場合でも動作する。nullを受け取る。
+        @RequestParam(name = "searchText", required = false) String searchText, // 値が渡されない場合でも動作するnullを受け取る
+        @RequestParam(name = "category", required = false) String category, // 値が渡されない場合でも動作するnullを受け取る
         Model model) {
 
         List<Recipe> list;

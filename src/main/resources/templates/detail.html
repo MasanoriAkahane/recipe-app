@@ -87,14 +87,14 @@
         <ul class="detail-ingredients" th:if="${ingredientLines != null and !#lists.isEmpty(ingredientLines)}">
           <li th:each="ingredient : ${ingredientLines}" th:text="${ingredient}">生鮭 2切れ</li>
         </ul>
-        <p class="detail-empty-text" th:if="${recipe.ingredients == null or recipe.ingredients.isEmpty()}">材料は登録されていません。</p>
+        <p class="detail-empty-text" th:if="${recipe.ingredients == null or recipe.ingredients.isEmpty()}">材料は登録されていません</p>
       </section>
       <section class="recipe-content-section" aria-labelledby="instructions-heading">
         <div class="content-section-heading"><h2 id="instructions-heading">Directions</h2></div>
         <ol class="detail-directions" th:if="${instructionLines != null and !#lists.isEmpty(instructionLines)}">
-          <li th:each="step : ${instructionLines}"><span th:text="${step}">鮭に塩を振る。</span></li>
+          <li th:each="step : ${instructionLines}"><span th:text="${step}">鮭に塩を振る</span></li>
         </ol>
-        <p class="detail-empty-text" th:if="${instructionLines == null or #lists.isEmpty(instructionLines)}">作り方は登録されていません。</p>
+        <p class="detail-empty-text" th:if="${instructionLines == null or #lists.isEmpty(instructionLines)}">作り方は登録されていません</p>
       </section>
     </div>
   </main>
@@ -105,7 +105,7 @@
     </div>
     <p class="eyebrow">DELETE RECIPE</p>
     <h2 id="deleteTitle">「<span th:text="${recipe.title}">レシピ名</span>」を削除しますか？</h2>
-    <p id="deleteNote">削除したレシピは元に戻せません。</p>
+    <p id="deleteNote">削除したレシピは元に戻せません</p>
     <div class="delete-dialog-actions">
       <form method="post" action="/recipes/1/delete" th:action="@{/recipes/{id}/delete(id=${recipe.id})}">
         <button type="submit" class="button button-confirm-delete">削除する</button>

@@ -14,13 +14,13 @@ import com.worksap.nlp.sudachi.Tokenizer;
 
 import jakarta.annotation.PreDestroy;
 
-// 登録・編集時の「読み」と、検索語の「読み」を生成するクラス。
+// 登録・編集時の「読み」と、検索語の「読み」を生成するクラス
 @Component
 public class SudachiReadingUtils {
 
     private final Dictionary dictionary;
 
-    // Spring Boot起動時に1回だけ辞書を読み込む。
+    // Spring Boot起動時に1回だけ辞書を読み込む
     public SudachiReadingUtils(@Value("${sudachi.dictionary.path}") String dictionaryPath)
             throws IOException {
         Path path = Path.of(dictionaryPath).toAbsolutePath();
@@ -37,7 +37,7 @@ public class SudachiReadingUtils {
         }
 
         StringBuilder reading = new StringBuilder();
-        // tokenizerは各呼び出しで取得する。辞書本体は共有する。
+        // tokenizerは各呼び出しで取得する辞書本体は共有する
         Tokenizer tokenizer = dictionary.tokenizer();
         for (Morpheme word : tokenizer.tokenize(Tokenizer.SplitMode.C, text)) {
             String kana = word.readingForm();
